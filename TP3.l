@@ -27,10 +27,9 @@ struct nodoTIPOA *punteroLitCad = NULL;
 struct nodoTIPOB *punteroPRes = NULL;
 struct nodoTIPOA *punteroCTEO = NULL;
 struct nodoTIPOA *punteroPunt = NULL;
-struct nodoTIPOA * agregarAListaA(struct nodoTIPOA *puntero, char nuevaEntrada[], int entero);
-struct nodoTIPOB *agregarAListaB(struct nodoTIPOB *puntero, char nuevaEntrada[]);
-struct nodoTIPOA *buscarA(struct nodoTIPOA *puntero, char clave[]);
-struct nodoTIPOB *buscarB(struct nodoTIPOB *puntero, char clave[]);
+struct nodoTIPOA * agregarAListaA(struct nodoTIPOA *puntero, char *nuevaEntrada, int entero);
+struct nodoTIPOB *agregarAListaB(struct nodoTIPOB *puntero, char *nuevaEntrada);
+struct nodoTIPOA *buscar(struct nodoTIPOA *puntero, char *match);
 void mostrarListaA(struct nodoTIPOA* puntero);
 void mostrarListaB(struct nodoTIPOB* puntero);
 int octToDec(char oct[]);
@@ -57,7 +56,7 @@ PUNTUACION  ";"|","|"("|")"|"{"|"}"
 {ID}          { char *matchID;
                 matchID=(char *)malloc(sizeof(char *));
                 strcpy(matchID,yytext);
-                struct nodoTIPOA * ID=buscarA(punteroID,matchID);
+                struct nodoTIPOA *ID=buscar(punteroID,matchID);
                 if(ID==NULL){
                     punteroID=agregarAListaA(punteroID,matchID,1);
                 }else{
@@ -88,7 +87,7 @@ PUNTUACION  ";"|","|"("|")"|"{"|"}"
 {PUNTUACION}    {   char *matchP;
                     matchP=(char *)malloc(sizeof(char *));
                     strcpy(matchP,yytext);
-                    struct nodoTIPOA * ID=buscarA(punteroPunt,matchP);
+                    struct nodoTIPOA * ID=buscar(punteroPunt,matchP);
                     if(ID==NULL){
                         punteroPunt=agregarAListaA(punteroPunt,matchP,1);
                     }else{
@@ -104,7 +103,7 @@ PUNTUACION  ";"|","|"("|")"|"{"|"}"
 //OPERADOR	"++"|"*"|"+"|"&"|"!"|"sizeof"|"/"|"%"|"<"|"<="|">"|">="|"=="|"!="|"&&"|"||"|"?"|:|=|+=
 //{OPERADOR}      {printf("La cadena %s representa un OPERADOR\n", yytext);}
 
-struct nodoTIPOA *agregarAListaA(struct nodoTIPOA *puntero, char nuevaEntrada[], int entero){
+struct nodoTIPOA *agregarAListaA(struct nodoTIPOA *puntero, char *nuevaEntrada, int entero){
     struct nodoTIPOA *nuevo;
     nuevo = (struct nodoTIPOA*)malloc(sizeof(struct nodoTIPOA));
     nuevo->string=nuevaEntrada;
@@ -122,7 +121,7 @@ struct nodoTIPOA *agregarAListaA(struct nodoTIPOA *puntero, char nuevaEntrada[],
     return puntero;
 }
 
-struct nodoTIPOB *agregarAListaB(struct nodoTIPOB *puntero, char nuevaEntrada[]){
+struct nodoTIPOB *agregarAListaB(struct nodoTIPOB *puntero, char *nuevaEntrada){
     struct nodoTIPOB *nuevo;
     nuevo = (struct nodoTIPOB*)malloc(sizeof(struct nodoTIPOB));
     nuevo->string=nuevaEntrada;
@@ -139,41 +138,22 @@ struct nodoTIPOB *agregarAListaB(struct nodoTIPOB *puntero, char nuevaEntrada[])
     return puntero;
 }
 
-struct nodoTIPOA *buscarA(struct nodoTIPOA *puntero, char clave[]){
-    struct nodoTIPOA *punteroEncontrado;
-    struct nodoTIPOA *aux;
+struct nodoTIPOA *buscar(struct nodoTIPOA *puntero, char *match){
+    struct nodoTIPOA *punteroEncontrado = NULL;
     int encontrado=0;
     if(puntero!=NULL){
-        aux=puntero;
-        while(aux->next!=NULL && encontrado==0){
-            if(strcmp(aux->string,clave)==0){encontrado=1;}
-            punteroEncontrado=aux;
-            aux=aux->next;
+        struct nodoTIPOA *aux=puntero;
+        while(aux!=NULL && encontrado==0){
+            if(strcmp(aux->string,match)==0){
+                punteroEncontrado=aux;
+                encontrado=1;
+            }else{
+                aux=aux->next;
+            }   
         }
-        if(encontrado==0){punteroEncontrado=NULL;}
-    }else{
-    	punteroEncontrado = NULL;
     }
     return punteroEncontrado;
 }
-
-/*struct nodoTIPOB *buscarB(struct nodoTIPOB *puntero, char clave[]){
-    struct nodoTIPOB *punteroEncontrado;
-    struct nodoTIPOB *aux;
-    int encontrado=0;
-    if(puntero!=NULL){
-        aux=puntero;
-        while(aux->next!=NULL && encontrado==0){
-            if(strcmp(aux->string,clave)==0){encontrado=1;}
-            punteroEncontrado=aux;
-            aux=aux->next;
-        }
-        if(encontrado==0){punteroEncontrado=NULL;}
-    }else{
-    	punteroEncontrado = NULL;
-    }
-    return punteroEncontrado;
-}*/
 
 void mostrarListaA(struct nodoTIPOA *puntero){
     struct nodoTIPOA *aux=puntero;
@@ -204,8 +184,6 @@ int octToDec(char oct[]){
     };
     return dec;
 }
-
-
 
 int yywrap(){} 
 

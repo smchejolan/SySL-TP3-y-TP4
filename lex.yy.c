@@ -520,14 +520,13 @@ struct nodoTIPOA *punteroLitCad = NULL;
 struct nodoTIPOB *punteroPRes = NULL;
 struct nodoTIPOA *punteroCTEO = NULL;
 struct nodoTIPOA *punteroPunt = NULL;
-struct nodoTIPOA * agregarAListaA(struct nodoTIPOA *puntero, char nuevaEntrada[], int entero);
-struct nodoTIPOB *agregarAListaB(struct nodoTIPOB *puntero, char nuevaEntrada[]);
-struct nodoTIPOA *buscarA(struct nodoTIPOA *puntero, char clave[]);
-struct nodoTIPOB *buscarB(struct nodoTIPOB *puntero, char clave[]);
+struct nodoTIPOA * agregarAListaA(struct nodoTIPOA *puntero, char *nuevaEntrada, int entero);
+struct nodoTIPOB *agregarAListaB(struct nodoTIPOB *puntero, char *nuevaEntrada);
+struct nodoTIPOA *buscar(struct nodoTIPOA *puntero, char *match);
 void mostrarListaA(struct nodoTIPOA* puntero);
 void mostrarListaB(struct nodoTIPOB* puntero);
 int octToDec(char oct[]);
-#line 531 "lex.yy.c"
+#line 530 "lex.yy.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -678,9 +677,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
 
-#line 49 "TP3.l"
+#line 48 "TP3.l"
 
-#line 684 "lex.yy.c"
+#line 683 "lex.yy.c"
 
 	if ( yy_init )
 		{
@@ -765,7 +764,7 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 50 "TP3.l"
+#line 49 "TP3.l"
 { char *matchPR;
                 matchPR=(char *)malloc(sizeof(char *));
                 strcpy(matchPR,yytext);
@@ -776,11 +775,11 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 57 "TP3.l"
+#line 56 "TP3.l"
 { char *matchID;
                 matchID=(char *)malloc(sizeof(char *));
                 strcpy(matchID,yytext);
-                struct nodoTIPOA * ID=buscarA(punteroID,matchID);
+                struct nodoTIPOA *ID=buscar(punteroID,matchID);
                 if(ID==NULL){
                     punteroID=agregarAListaA(punteroID,matchID,1);
                 }else{
@@ -792,12 +791,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 69 "TP3.l"
+#line 68 "TP3.l"
 {acum = acum + atoi(yytext); printf("El valor acumulado es %d\n", acum);}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 70 "TP3.l"
+#line 69 "TP3.l"
 { char *matchOctal;
                 matchOctal=(char *)malloc(sizeof(char *));
                 strcpy(matchOctal,yytext);
@@ -808,22 +807,22 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 77 "TP3.l"
+#line 76 "TP3.l"
 {printf("La cadena %s representa una constante entera hexadecimal\n", yytext);}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 78 "TP3.l"
+#line 77 "TP3.l"
 {printf("La cadena %s representa una constante real\n", yytext);}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 79 "TP3.l"
+#line 78 "TP3.l"
 {printf("La cadena %s representa una constante caracter\n", yytext);}  
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 80 "TP3.l"
+#line 79 "TP3.l"
 {   char *matchLT;
                     matchLT=(char *)malloc(sizeof(char *));
                     strcpy(matchLT,yytext);
@@ -834,16 +833,16 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 87 "TP3.l"
+#line 86 "TP3.l"
 {printf("La cadena %s representa un comentario\n", yytext);} 
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 88 "TP3.l"
+#line 87 "TP3.l"
 {   char *matchP;
                     matchP=(char *)malloc(sizeof(char *));
                     strcpy(matchP,yytext);
-                    struct nodoTIPOA * ID=buscarA(punteroPunt,matchP);
+                    struct nodoTIPOA * ID=buscar(punteroPunt,matchP);
                     if(ID==NULL){
                         punteroPunt=agregarAListaA(punteroPunt,matchP,1);
                     }else{
@@ -855,15 +854,15 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 100 "TP3.l"
+#line 99 "TP3.l"
 
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 102 "TP3.l"
+#line 101 "TP3.l"
 ECHO;
 	YY_BREAK
-#line 867 "lex.yy.c"
+#line 866 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1749,13 +1748,13 @@ int main()
 	return 0;
 	}
 #endif
-#line 102 "TP3.l"
+#line 101 "TP3.l"
 
 
 //OPERADOR	"++"|"*"|"+"|"&"|"!"|"sizeof"|"/"|"%"|"<"|"<="|">"|">="|"=="|"!="|"&&"|"||"|"?"|:|=|+=
 //{OPERADOR}      {printf("La cadena %s representa un OPERADOR\n", yytext);}
 
-struct nodoTIPOA *agregarAListaA(struct nodoTIPOA *puntero, char nuevaEntrada[], int entero){
+struct nodoTIPOA *agregarAListaA(struct nodoTIPOA *puntero, char *nuevaEntrada, int entero){
     struct nodoTIPOA *nuevo;
     nuevo = (struct nodoTIPOA*)malloc(sizeof(struct nodoTIPOA));
     nuevo->string=nuevaEntrada;
@@ -1773,7 +1772,7 @@ struct nodoTIPOA *agregarAListaA(struct nodoTIPOA *puntero, char nuevaEntrada[],
     return puntero;
 }
 
-struct nodoTIPOB *agregarAListaB(struct nodoTIPOB *puntero, char nuevaEntrada[]){
+struct nodoTIPOB *agregarAListaB(struct nodoTIPOB *puntero, char *nuevaEntrada){
     struct nodoTIPOB *nuevo;
     nuevo = (struct nodoTIPOB*)malloc(sizeof(struct nodoTIPOB));
     nuevo->string=nuevaEntrada;
@@ -1790,38 +1789,19 @@ struct nodoTIPOB *agregarAListaB(struct nodoTIPOB *puntero, char nuevaEntrada[])
     return puntero;
 }
 
-struct nodoTIPOA *buscarA(struct nodoTIPOA *puntero, char clave[]){
-    struct nodoTIPOA *punteroEncontrado;
-    struct nodoTIPOA *aux;
+struct nodoTIPOA *buscar(struct nodoTIPOA *puntero, char *match){
+    struct nodoTIPOA *punteroEncontrado = NULL;
     int encontrado=0;
     if(puntero!=NULL){
-        aux=puntero;
-        while(aux->next!=NULL && encontrado==0){
-            if(strcmp(aux->string,clave)==0){encontrado=1;}
-            punteroEncontrado=aux;
-            aux=aux->next;
+        struct nodoTIPOA *aux=puntero;
+        while(aux!=NULL && encontrado==0){
+            if(strcmp(aux->string,match)==0){
+                punteroEncontrado=aux;
+                encontrado=1;
+            }else{
+                aux=aux->next;
+            }   
         }
-        if(encontrado==0){punteroEncontrado=NULL;}
-    }else{
-    	punteroEncontrado = NULL;
-    }
-    return punteroEncontrado;
-}
-
-struct nodoTIPOB *buscarB(struct nodoTIPOB *puntero, char clave[]){
-    struct nodoTIPOB *punteroEncontrado;
-    struct nodoTIPOB *aux;
-    int encontrado=0;
-    if(puntero!=NULL){
-        aux=puntero;
-        while(aux->next!=NULL && encontrado==0){
-            if(strcmp(aux->string,clave)==0){encontrado=1;}
-            punteroEncontrado=aux;
-            aux=aux->next;
-        }
-        if(encontrado==0){punteroEncontrado=NULL;}
-    }else{
-    	punteroEncontrado = NULL;
     }
     return punteroEncontrado;
 }
@@ -1855,8 +1835,6 @@ int octToDec(char oct[]){
     };
     return dec;
 }
-
-
 
 int yywrap(){} 
 
