@@ -1,0 +1,11 @@
+# depslib dependency file v1.0
+1569041943 source:f:\facultad\2019\sintaxis y semantica de los lenguajes\tp3\lex.yy.c
+	<stdio.h>
+	<stdlib.h>
+	<unistd.h>
+	<io.h>
+	<stdlib.h>
+	<math.h>
+	<stdio.h>
+	<stdlib.h>
+
