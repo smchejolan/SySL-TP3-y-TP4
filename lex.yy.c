@@ -520,13 +520,14 @@ struct nodoTIPOA *punteroLitCad = NULL;
 struct nodoTIPOB *punteroPRes = NULL;
 struct nodoTIPOA *punteroCTEO = NULL;
 struct nodoTIPOA *punteroPunt = NULL;
+struct nodoTIPOA *punteroHex = NULL;
 struct nodoTIPOA * agregarAListaA(struct nodoTIPOA *puntero, char *nuevaEntrada, int entero);
 struct nodoTIPOB *agregarAListaB(struct nodoTIPOB *puntero, char *nuevaEntrada);
 struct nodoTIPOA *buscar(struct nodoTIPOA *puntero, char *match);
 void mostrarListaA(struct nodoTIPOA* puntero);
 void mostrarListaB(struct nodoTIPOB* puntero);
 int octToDec(char oct[]);
-#line 530 "lex.yy.c"
+#line 531 "lex.yy.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -677,9 +678,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
 
-#line 48 "TP3.l"
+#line 49 "TP3.l"
 
-#line 683 "lex.yy.c"
+#line 684 "lex.yy.c"
 
 	if ( yy_init )
 		{
@@ -764,7 +765,7 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 49 "TP3.l"
+#line 50 "TP3.l"
 { char *matchPR;
                 matchPR=(char *)malloc(sizeof(char *));
                 strcpy(matchPR,yytext);
@@ -775,7 +776,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 56 "TP3.l"
+#line 57 "TP3.l"
 { char *matchID;
                 matchID=(char *)malloc(sizeof(char *));
                 strcpy(matchID,yytext);
@@ -791,12 +792,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 68 "TP3.l"
+#line 69 "TP3.l"
 {acum = acum + atoi(yytext); printf("El valor acumulado es %d\n", acum);}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 69 "TP3.l"
+#line 70 "TP3.l"
 { char *matchOctal;
                 matchOctal=(char *)malloc(sizeof(char *));
                 strcpy(matchOctal,yytext);
@@ -807,22 +808,29 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 76 "TP3.l"
-{printf("La cadena %s representa una constante entera hexadecimal\n", yytext);}
+#line 77 "TP3.l"
+{ printf("La cadena %s representa una constante entera hexadecimal\n", yytext);
+                 char *matchHexa;
+                matchHexa=(char *)malloc(sizeof(char *));
+                strcpy(matchHexa,yytext);
+                punteroHex = agregarAListaA(punteroHex,matchHexa,hexToDec(matchHexa));
+                printf("-----------Listado de Constantes Hexadecimales-----------\n");
+                printf("cte hexadecimal\t\t valor decimal\n");
+                mostrarListaA(punteroHex);}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 77 "TP3.l"
+#line 85 "TP3.l"
 {printf("La cadena %s representa una constante real\n", yytext);}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 78 "TP3.l"
+#line 86 "TP3.l"
 {printf("La cadena %s representa una constante caracter\n", yytext);}  
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 79 "TP3.l"
+#line 87 "TP3.l"
 {   char *matchLT;
                     matchLT=(char *)malloc(sizeof(char *));
                     strcpy(matchLT,yytext);
@@ -833,12 +841,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 86 "TP3.l"
+#line 94 "TP3.l"
 {printf("La cadena %s representa un comentario\n", yytext);} 
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 87 "TP3.l"
+#line 95 "TP3.l"
 {   char *matchP;
                     matchP=(char *)malloc(sizeof(char *));
                     strcpy(matchP,yytext);
@@ -854,15 +862,15 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 99 "TP3.l"
+#line 107 "TP3.l"
 
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 101 "TP3.l"
+#line 109 "TP3.l"
 ECHO;
 	YY_BREAK
-#line 866 "lex.yy.c"
+#line 874 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1748,7 +1756,7 @@ int main()
 	return 0;
 	}
 #endif
-#line 101 "TP3.l"
+#line 109 "TP3.l"
 
 
 //OPERADOR	"++"|"*"|"+"|"&"|"!"|"sizeof"|"/"|"%"|"<"|"<="|">"|">="|"=="|"!="|"&&"|"||"|"?"|:|=|+=
@@ -1834,6 +1842,10 @@ int octToDec(char oct[]){
         potencia++;
     };
     return dec;
+}
+
+int hexToDec(char *hex){
+    return (int)strtol(hex, NULL, 0);
 }
 
 int yywrap(){} 

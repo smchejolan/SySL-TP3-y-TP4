@@ -1,5 +1,15 @@
 # depslib dependency file v1.0
-1569192128 source:f:\facultad\2019\sintaxis y semantica de los lenguajes\tp3\lex.yy.c
+1569041943 source:f:\facultad\2019\sintaxis y semantica de los lenguajes\tp3\lex.yy.c
+	<stdio.h>
+	<stdlib.h>
+	<unistd.h>
+	<io.h>
+	<stdlib.h>
+	<math.h>
+	<stdio.h>
+	<stdlib.h>
+
+1569184346 source:c:\users\matup\desktop\facultad\sintaxis\tp integrador\proyecto tp3-4\tp_3_y_4\lex.yy.c
 	<stdio.h>
 	<stdlib.h>
 	<unistd.h>

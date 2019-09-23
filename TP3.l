@@ -27,6 +27,7 @@ struct nodoTIPOA *punteroLitCad = NULL;
 struct nodoTIPOB *punteroPRes = NULL;
 struct nodoTIPOA *punteroCTEO = NULL;
 struct nodoTIPOA *punteroPunt = NULL;
+struct nodoTIPOA *punteroHex = NULL;
 struct nodoTIPOA * agregarAListaA(struct nodoTIPOA *puntero, char *nuevaEntrada, int entero);
 struct nodoTIPOB *agregarAListaB(struct nodoTIPOB *puntero, char *nuevaEntrada);
 struct nodoTIPOA *buscar(struct nodoTIPOA *puntero, char *match);
@@ -73,9 +74,16 @@ PUNTUACION  ";"|","|"("|")"|"{"|"}"
                 printf("-----------Listado de Constantes octales-----------\n");
                 printf("cte octal\t\t valor decimal\n");
                 mostrarListaA(punteroCTEO);}
-{CEHEXA}      {printf("La cadena %s representa una constante entera hexadecimal\n", yytext);}
-{CREAL}       {printf("La cadena %s representa una constante real\n", yytext);}
-{CCHAR}       {printf("La cadena %s representa una constante caracter\n", yytext);}  
+{CEHEXA}        { printf("La cadena %s representa una constante entera hexadecimal\n", yytext);
+                 char *matchHexa;
+                matchHexa=(char *)malloc(sizeof(char *));
+                strcpy(matchHexa,yytext);
+                punteroHex = agregarAListaA(punteroHex,matchHexa,hexToDec(matchHexa));
+                printf("-----------Listado de Constantes Hexadecimales-----------\n");
+                printf("cte hexadecimal\t\t valor decimal\n");
+                mostrarListaA(punteroHex);}
+{CREAL}         {printf("La cadena %s representa una constante real\n", yytext);}
+{CCHAR}         {printf("La cadena %s representa una constante caracter\n", yytext);}  
 {LITERALCADENA} {   char *matchLT;
                     matchLT=(char *)malloc(sizeof(char *));
                     strcpy(matchLT,yytext);
@@ -183,6 +191,10 @@ int octToDec(char oct[]){
         potencia++;
     };
     return dec;
+}
+
+int hexToDec(char *hex){
+    return (int)strtol(hex, NULL, 0);
 }
 
 int yywrap(){} 
