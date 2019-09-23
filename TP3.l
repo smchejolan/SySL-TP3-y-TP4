@@ -28,12 +28,15 @@ struct nodoTIPOB *punteroPRes = NULL;
 struct nodoTIPOA *punteroCTEO = NULL;
 struct nodoTIPOA *punteroPunt = NULL;
 struct nodoTIPOA *punteroHex = NULL;
+struct nodoTIPOA *punteroOP = NULL;
+struct nodoTIPOB *punteroCOM = NULL;
 struct nodoTIPOA * agregarAListaA(struct nodoTIPOA *puntero, char *nuevaEntrada, int entero);
 struct nodoTIPOB *agregarAListaB(struct nodoTIPOB *puntero, char *nuevaEntrada);
 struct nodoTIPOA *buscar(struct nodoTIPOA *puntero, char *match);
 void mostrarListaA(struct nodoTIPOA* puntero);
 void mostrarListaB(struct nodoTIPOB* puntero);
 int octToDec(char oct[]);
+int hexToDec(char *hex);
 %}
 PRESERVADA	while|do|if|else|for|int|char|return|case|switch|auto|double|struct|break|long|enum|register|typedef|extern|union|const|float|short|unsigned|continue|signed|void|default|goto|sizeof|volatile|static
 ID       	[a-zA-Z_][a-zA-Z0-9_]*
@@ -51,10 +54,7 @@ PUNTUACION  ";"|","|"("|")"|"{"|"}"
 {PRESERVADA}  { char *matchPR;
                 matchPR=(char *)malloc(sizeof(char *));
                 strcpy(matchPR,yytext);
-                punteroPRes=agregarAListaB(punteroPRes,matchPR);
-                printf("-----------Listado de Palabras reservadas-----------\n");
-	            printf("Palabra reservada\n");
-	            mostrarListaB(punteroPRes);}
+                punteroPRes=agregarAListaB(punteroPRes,matchPR);}                
 {ID}          { char *matchID;
                 matchID=(char *)malloc(sizeof(char *));
                 strcpy(matchID,yytext);
@@ -62,38 +62,37 @@ PUNTUACION  ";"|","|"("|")"|"{"|"}"
                 if(ID==NULL){
                     punteroID=agregarAListaA(punteroID,matchID,1);
                 }else{
-                    ID->numero++;
-                }	
-                printf("-----------Listado de identificadores-----------\n");
-	            printf("Identificador\t\t cantidad de veces que aparece\n");
-	            mostrarListaA(punteroID);}
-{CEDECIMAL}   {acum = acum + atoi(yytext); printf("El valor acumulado es %d\n", acum);}
+                    ID->numero++;}}
+{CEDECIMAL}   { char *matchDEC;
+                matchDEC=(char *)malloc(sizeof(char *));
+                strcpy(matchDEC,yytext);
+                acum = acum + atoi(matchDEC); }
 {CEOCTAL}     { char *matchOctal;
                 matchOctal=(char *)malloc(sizeof(char *));
                 strcpy(matchOctal,yytext);
-                punteroCTEO = agregarAListaA(punteroCTEO,matchOctal,octToDec(matchOctal));
-                printf("-----------Listado de Constantes octales-----------\n");
-                printf("cte octal\t\t valor decimal\n");
-                mostrarListaA(punteroCTEO);}
-{CEHEXA}        { printf("La cadena %s representa una constante entera hexadecimal\n", yytext);
-                 char *matchHexa;
+                punteroCTEO = agregarAListaA(punteroCTEO,matchOctal,octToDec(matchOctal));}
+{CEHEXA}        {char *matchHexa;
                 matchHexa=(char *)malloc(sizeof(char *));
                 strcpy(matchHexa,yytext);
-                punteroHex = agregarAListaA(punteroHex,matchHexa,hexToDec(matchHexa));
-                printf("-----------Listado de Constantes Hexadecimales-----------\n");
-                printf("cte hexadecimal\t\t valor decimal\n");
-                mostrarListaA(punteroHex);}
+                punteroHex = agregarAListaA(punteroHex,matchHexa,hexToDec(matchHexa));}
 {CREAL}         {printf("La cadena %s representa una constante real\n", yytext);}
 {CCHAR}         {printf("La cadena %s representa una constante caracter\n", yytext);}  
 {LITERALCADENA} {   char *matchLT;
                     matchLT=(char *)malloc(sizeof(char *));
                     strcpy(matchLT,yytext);
-                    punteroLitCad=agregarAListaA(punteroLitCad,matchLT,strlen(matchLT)-2);
-                    printf("-----------Listado de Literal cadena-----------\n");
-                    printf("LITERALCADENA\t\t longitud\n");
-                    mostrarListaA(punteroLitCad);} 
-{COMENTARIO} 	{printf("La cadena %s representa un comentario\n", yytext);} 
-{OPERADOR}      {printf("La cadena %s representa un OPERADOR\n", yytext);}
+                    punteroLitCad=agregarAListaA(punteroLitCad,matchLT,strlen(matchLT)-2);} 
+{COMENTARIO} 	{char *matchCOM;
+                 matchCOM=(char *)malloc(sizeof(char *));
+                 strcpy(matchCOM,yytext);
+                 punteroCOM=agregarAListaB(punteroCOM,matchCOM);}
+{OPERADOR}      {char *matchOP;
+                 matchOP=(char *)malloc(sizeof(char *));
+                 strcpy(matchOP,yytext);
+                 struct nodoTIPOA *ID=buscar(punteroOP,matchOP);
+                 if(ID==NULL){
+                    punteroOP=agregarAListaA(punteroOP,matchOP,1);
+                 }else{
+                    ID->numero++;}}
 {PUNTUACION}    {   char *matchP;
                     matchP=(char *)malloc(sizeof(char *));
                     strcpy(matchP,yytext);
@@ -102,10 +101,7 @@ PUNTUACION  ";"|","|"("|")"|"{"|"}"
                         punteroPunt=agregarAListaA(punteroPunt,matchP,1);
                     }else{
                         ID->numero++;
-                    }	
-                    printf("-----------Listado de car de PUNTUACION-----------\n");
-                    printf("car de PUNTUACION\t\t cantidad de veces que aparece\n");
-                    mostrarListaA(punteroPunt);}
+                    }}
 [ \t\n]+          
 
 %%
@@ -168,7 +164,7 @@ void mostrarListaA(struct nodoTIPOA *puntero){
     struct nodoTIPOA *aux=puntero;
     if(puntero!=NULL){
         while(aux!=NULL){
-            printf("%s\t\t%d\n",aux->string,aux->numero);
+            printf("%s\t%d\n",aux->string,aux->numero);
             aux=aux->next;
         }
     }
@@ -200,7 +196,34 @@ int hexToDec(char *hex){
 
 int yywrap(){} 
 
-int main(int argc, char** argv){
+int main(){
+    yyout = fopen("salida.txt","w");
+    yyin = fopen("entrada.txt","r");
     yylex();
+    printf("-----------Listado de Palabras reservadas-----------\n");
+    printf("Palabra reservada\n");
+    mostrarListaB(punteroPRes);
+    printf("-----------Listado de identificadores-----------\n");
+    printf("Identificador\tCantidad de veces que aparece\n");
+    mostrarListaA(punteroID);   
+    printf("-----------Listado de Constantes octales-----------\n");
+    printf("Cte octal\tValor decimal\n");
+    mostrarListaA(punteroCTEO);
+    printf("-----------Listado de Constantes Hexadecimales-----------\n");
+    printf("Cte hexadecimal\tValor decimal\n");
+    mostrarListaA(punteroHex);
+    printf("-----------Listado de Literales cadena-----------\n");
+    printf("Literal Cadena\tLongitud\n");
+    mostrarListaA(punteroLitCad);
+    printf("-----------Listado de Caracteres de puntuacion-----------\n");
+    printf("Caracter de puntuacion\tCantidad de veces que aparece\n");
+    mostrarListaA(punteroPunt);
+    printf("-----------Listado de Comentarios-----------\n");
+    printf("Comentario\n");
+    mostrarListaB(punteroCOM);
+    printf("-----------Listado de operadores-----------\n");
+    printf("Operador\tCantidad de veces que aparece\n");
+    mostrarListaA(punteroOP);
+    printf("El valor acumulado es %d\n", acum);
     return 0;
-    }
+}
