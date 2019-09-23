@@ -44,6 +44,7 @@ CREAL	    [0-9]*"."[0-9]+([eE]([\+\-]?)[0-9]+)?[FfLlDd]?|[0-9]+"."([eE][\+\-]?[0
 CCHAR		"'"."'"
 LITERALCADENA \"(\\.|[^\\"])*\"
 COMENTARIO  "//".*\n|"/*"(.|\n)*"*/"
+OPERADOR	"++"|"*"|"+"|"&"|"!"|"sizeof"|"/"|"%"|"<"|"<="|">"|">="|"=="|"!="|"&&"|"||"|"?"|":"|"="|"+="
 PUNTUACION  ";"|","|"("|")"|"{"|"}"
 
 %%
@@ -92,6 +93,7 @@ PUNTUACION  ";"|","|"("|")"|"{"|"}"
                     printf("LITERALCADENA\t\t longitud\n");
                     mostrarListaA(punteroLitCad);} 
 {COMENTARIO} 	{printf("La cadena %s representa un comentario\n", yytext);} 
+{OPERADOR}      {printf("La cadena %s representa un OPERADOR\n", yytext);}
 {PUNTUACION}    {   char *matchP;
                     matchP=(char *)malloc(sizeof(char *));
                     strcpy(matchP,yytext);
@@ -108,8 +110,7 @@ PUNTUACION  ";"|","|"("|")"|"{"|"}"
 
 %%
 
-//OPERADOR	"++"|"*"|"+"|"&"|"!"|"sizeof"|"/"|"%"|"<"|"<="|">"|">="|"=="|"!="|"&&"|"||"|"?"|:|=|+=
-//{OPERADOR}      {printf("La cadena %s representa un OPERADOR\n", yytext);}
+//
 
 struct nodoTIPOA *agregarAListaA(struct nodoTIPOA *puntero, char *nuevaEntrada, int entero){
     struct nodoTIPOA *nuevo;
