@@ -14,29 +14,34 @@ struct nodoTIPOB{
     char *string;
     struct nodoTIPOB* next;
 };
-struct nodoCTEReal{
+struct nodoTIPOC{
     char *string;
-    int mantiza;
+    double mantisa;
     int parteEntera;
-    struct nodoCTEReal* next;
+    struct nodoTIPOC* next;
 };
 
 int acum = 0;
 struct nodoTIPOA *punteroID = NULL;	
 struct nodoTIPOA *punteroLitCad = NULL;
 struct nodoTIPOB *punteroPRes = NULL;
+struct nodoTIPOA *punteroDEC = NULL;
 struct nodoTIPOA *punteroCTEO = NULL;
 struct nodoTIPOA *punteroPunt = NULL;
 struct nodoTIPOA *punteroHex = NULL;
 struct nodoTIPOA *punteroOP = NULL;
 struct nodoTIPOB *punteroCOM = NULL;
+struct nodoTIPOC *punteroReal = NULL;
 struct nodoTIPOA * agregarAListaA(struct nodoTIPOA *puntero, char *nuevaEntrada, int entero);
 struct nodoTIPOB *agregarAListaB(struct nodoTIPOB *puntero, char *nuevaEntrada);
+struct nodoTIPOC *agregarAListaC(struct nodoTIPOC *puntero, char *nuevaEntrada,double flotante, int entero);
 struct nodoTIPOA *buscar(struct nodoTIPOA *puntero, char *match);
 void mostrarListaA(struct nodoTIPOA* puntero);
 void mostrarListaB(struct nodoTIPOB* puntero);
 int octToDec(char oct[]);
 int hexToDec(char *hex);
+double stringToReal(char realC[]);
+double mantiza(double real);
 %}
 PRESERVADA	while|do|if|else|for|int|char|return|case|switch|auto|double|struct|break|long|enum|register|typedef|extern|union|const|float|short|unsigned|continue|signed|void|default|goto|sizeof|volatile|static
 ID       	[a-zA-Z_][a-zA-Z0-9_]*
@@ -66,7 +71,9 @@ PUNTUACION  ";"|","|"("|")"|"{"|"}"
 {CEDECIMAL}   { char *matchDEC;
                 matchDEC=(char *)malloc(sizeof(char *));
                 strcpy(matchDEC,yytext);
-                acum = acum + atoi(matchDEC); }
+                acum = acum + atoi(matchDEC); 
+                punteroDEC = agregarAListaA(punteroDEC,matchDEC,acum);
+                }
 {CEOCTAL}     { char *matchOctal;
                 matchOctal=(char *)malloc(sizeof(char *));
                 strcpy(matchOctal,yytext);
@@ -75,7 +82,12 @@ PUNTUACION  ";"|","|"("|")"|"{"|"}"
                 matchHexa=(char *)malloc(sizeof(char *));
                 strcpy(matchHexa,yytext);
                 punteroHex = agregarAListaA(punteroHex,matchHexa,hexToDec(matchHexa));}
-{CREAL}         {printf("La cadena %s representa una constante real\n", yytext);}
+{CREAL}       { char *matchReal;
+                matchReal = (char*)malloc(sizeof(char *));
+                strcpy(matchReal,yytext);
+                double real = atof(matchReal), mant = mantiza(real);
+                int realInt = (int)real;
+                punteroReal = agregarAListaC(punteroReal,matchReal,mant,realInt);}                
 {CCHAR}         {printf("La cadena %s representa una constante caracter\n", yytext);}  
 {LITERALCADENA} {   char *matchLT;
                     matchLT=(char *)malloc(sizeof(char *));
@@ -143,6 +155,25 @@ struct nodoTIPOB *agregarAListaB(struct nodoTIPOB *puntero, char *nuevaEntrada){
     return puntero;
 }
 
+struct nodoTIPOC *agregarAListaC(struct nodoTIPOC *puntero, char *nuevaEntrada,double flotante, int entero){
+    struct nodoTIPOC *nuevo;
+    nuevo = (struct nodoTIPOC*)malloc(sizeof(struct nodoTIPOC));
+    nuevo->string=nuevaEntrada;
+    nuevo->mantisa=flotante;
+    nuevo->parteEntera=entero;
+    nuevo->next=NULL;
+    if(puntero!=NULL){
+        struct nodoTIPOC *aux = puntero;
+        while(aux->next!=NULL){
+            aux=aux->next;
+        }
+        aux->next = nuevo;
+    }else{
+        puntero = nuevo;
+    }
+    return puntero;
+}
+
 struct nodoTIPOA *buscar(struct nodoTIPOA *puntero, char *match){
     struct nodoTIPOA *punteroEncontrado = NULL;
     int encontrado=0;
@@ -180,6 +211,15 @@ void mostrarListaB(struct nodoTIPOB *puntero){
     }
 }
 
+void mostrarListaC(struct nodoTIPOC *puntero){
+    struct nodoTIPOC *aux=puntero;
+    if(puntero!=NULL){
+        while(aux!=NULL){
+            printf("%s\t%.10f\t%d\n",aux->string,aux->mantisa,aux->parteEntera);
+            aux=aux->next;
+        }
+    }
+}
 int octToDec(char oct[]){
 	int longitud=0,dec=0,potencia=0;
     for(longitud=0;oct[longitud]!='\0';longitud++);
@@ -194,6 +234,10 @@ int hexToDec(char *hex){
     return (int)strtol(hex, NULL, 0);
 }
 
+double mantiza(double real){
+	return (real - (double)((int)real));
+}
+
 int yywrap(){} 
 
 int main(){
@@ -206,12 +250,18 @@ int main(){
     printf("-----------Listado de identificadores-----------\n");
     printf("Identificador\tCantidad de veces que aparece\n");
     mostrarListaA(punteroID);   
+    printf("-----------Listado de Constantes Decimales-----------\n");
+    printf("Cte decimal\tValor acumulado\n");
+    mostrarListaA(punteroDEC);
     printf("-----------Listado de Constantes octales-----------\n");
     printf("Cte octal\tValor decimal\n");
     mostrarListaA(punteroCTEO);
     printf("-----------Listado de Constantes Hexadecimales-----------\n");
     printf("Cte hexadecimal\tValor decimal\n");
     mostrarListaA(punteroHex);
+    printf("-----------Listado de Constantes Reales-----------\n");
+    printf("Cte real\tMantiza\tValor entero\n");
+    mostrarListaC(punteroReal);
     printf("-----------Listado de Literales cadena-----------\n");
     printf("Literal Cadena\tLongitud\n");
     mostrarListaA(punteroLitCad);
@@ -224,6 +274,5 @@ int main(){
     printf("-----------Listado de operadores-----------\n");
     printf("Operador\tCantidad de veces que aparece\n");
     mostrarListaA(punteroOP);
-    printf("El valor acumulado es %d\n", acum);
     return 0;
 }
