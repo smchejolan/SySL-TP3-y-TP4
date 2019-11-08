@@ -69,6 +69,11 @@ PUNTUACION  ";"|","|"("|")"|"{"|"}"
                     }else{
                         ID->numero++;
                     }}
+"&&"            {return AND} 
+"=="            {return COMPARACION}
+">="            {return COMPARACION}
+"++"            {return INCREMENTO}
+
 [ \t\n]+          
 
 %%
