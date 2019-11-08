@@ -1,11 +1,17 @@
-/* Calculadora de notaci�n infija (usual) */
+/* Calculadora de notacion infija (usual) */
 
 %{
 #include <math.h>
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
+#define YYDEBUG 1
+extern FILE *yyin;
+extern FILE *yyout;
+
 %}
+
+
 
 %union
 {
@@ -28,9 +34,9 @@
 %nonassoc '^'
 
 
-%% /* A continuaci�n las reglas gramaticales y las acciones */
+%% /* A continuacion las reglas gramaticales y las acciones */
 
-input:    /* vac�o */
+input:    /* vacio */
         | input line
 ;
 
@@ -38,7 +44,7 @@ line:     '\n'
         | exp '\n'  { printf ("\t %f\n", $1); }
 ;
 
-exp:    NUM               { $$ = $1             }
+expresion:    NUM               { $$ = $1             }
         |'(' '-' NUM ')'  { $$ = - $3           }
         | exp '+' exp     { $$ = $1 + $3;       }
         | exp '-' exp     { $$ = $1 - $3;       }
@@ -46,6 +52,10 @@ exp:    NUM               { $$ = $1             }
         | exp '/' exp     { $$ = $1 / $3;       }
         | exp '^' exp     { $$ = pow($1,$3);    }
 ;
+declaracion: ID           {     }
+          |ID '=' NUM {$$ = $3}
+
+
 %%
 
 yyerror (s)  /* Llamada por yyparse ante un error */
@@ -56,5 +66,7 @@ yyerror (s)  /* Llamada por yyparse ante un error */
 
 main ()
 {
+  yyin = fopen("Hola.txt","r+");
+  yyout = fopen("Chau.txt","w");
   yyparse ();
 }

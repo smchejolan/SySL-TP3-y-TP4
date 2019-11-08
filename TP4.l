@@ -4,11 +4,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
+#include<ctype.h>
 
 int octToDec(char oct[]);
 int hexToDec(char *hex);
 double stringToReal(char realC[]);
+int yylineno;
+
 %}
 PRESERVADA	while|do|if|else|for|int|char|return|case|switch|auto|double|struct|break|long|enum|register|typedef|extern|union|const|float|short|unsigned|continue|signed|void|default|goto|sizeof|volatile|static
 ID       	[a-zA-Z_][a-zA-Z0-9_]*
