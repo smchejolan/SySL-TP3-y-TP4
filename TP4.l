@@ -14,7 +14,7 @@ double stringToReal(char realC[]);
 
 
 %}
-PRESERVADA	while|do|if|else|for|int|char|return|case|switch|auto|double|struct|break|long|enum|register|typedef|extern|union|const|float|short|unsigned|continue|signed|void|default|goto|sizeof|volatile|static
+PRESERVADA	auto|break|register|typedef|extern|union|const|unsigned|continue|signed|void|default|goto|sizeof|volatile|static
 ID       	[a-zA-Z_][a-zA-Z0-9_]*
 CEDECIMAL 	[1-9][0-9]*
 CEOCTAL		0[0-7]*
@@ -23,12 +23,42 @@ CREAL	    [0-9]*"."[0-9]+([eE]([\+\-]?)[0-9]+)?[FfLlDd]?|[0-9]+"."([eE][\+\-]?[0
 CCHAR		"'"."'"
 LITERALCADENA \"(\\.|[^\\"])*\"
 COMENTARIO  "//".*\n|"/*"(.|\n)*"*/"
-OPERADOR	"++"|"*"|"+"|"&"|"!"|"sizeof"|"/"|"%"|"<"|"<="|">"|">="|"=="|"!="|"&&"|"||"|"?"|":"|"="|"+="
-PUNTUACION  ";"|","|"("|")"|"{"|"}"
+CHAR        char
+FLOAT       float
+LONG        long
+DOUBLE      double
+SHORT       short
+WHILE       while
+IF          if
+ELSE        else
+FOR         for
+DO          do
+TYPEDEF     typedef
+SWITCH      switch
+CASE        case
+STRUCT      struct
+SIZEOF      sizeof
+TIPODATO    int|float|double|char|long|short
+RETURN      return
+
+
+
 
 %%
-{PRESERVADA}  { strcpy(yylval.cadena,yytext);   return PRESERVADA;}
-{ID}          { strcpy(yylval.cadena,yytext);   return ID;}
+{PRESERVADA}    {strcpy(yylval.cadena,yytext); return PRESERVADA;}
+{TIPODATO}      {strcpy(yylval.cadena,yytext); return TIPODATO;}
+{RETURN}        {strcpy(yylval.cadena,yytext); return RETURN;}
+{ID}            {strcpy(yylval.cadena,yytext);   return ID;}
+{WHILE}         {strcpy(yylval.cadena,yytext);   return WHILE;}
+{DO}            {strcpy(yylval.cadena,yytext);   return DO;}
+{IF}            {strcpy(yylval.cadena,yytext);   return IF;}
+{ELSE}          {strcpy(yylval.cadena,yytext);   return ELSE;}
+{FOR}           {strcpy(yylval.cadena,yytext);   return FOR;}
+{TYPEDEF}       {strcpy(yylval.cadena,yytext);   return TYPEDEF;}
+{STRUCT}        {strcpy(yylval.cadena,yytext);   return STRUCT;}
+{SWITCH}        {strcpy(yylval.cadena,yytext);   return SWITCH;}
+{CASE}          {strcpy(yylval.cadena,yytext);   return CASE;}
+{SIZEOF}        {strcpy(yylval.cadena,yytext);   return SIZEOF;}
 {CEDECIMAL}   { yylval.entero = atoi(yytext);   return NUMI;}
 {CEOCTAL}     { char *matchOctal;
                 matchOctal=(char *)malloc(sizeof(char *));
@@ -46,29 +76,37 @@ PUNTUACION  ";"|","|"("|")"|"{"|"}"
                     matchLT=(char *)malloc(sizeof(char *));
                     strcpy(matchLT,yytext);
                     punteroLitCad=agregarAListaA(punteroLitCad,matchLT,strlen(matchLT)-2);return LCADENA;}
-{COMENTARIO} 	{char *matchCOM;
-                 matchCOM=(char *)malloc(sizeof(char *));
-                 strcpy(matchCOM,yytext);
-                 punteroCOM=agregarAListaB(punteroCOM,matchCOM);}
-{OPERADOR}      {char *matchOP;
-                 matchOP=(char *)malloc(sizeof(char *));
-                 strcpy(matchOP,yytext);
-                 struct nodoTIPOA *ID=buscar(punteroOP,matchOP);
-                 if(ID==NULL){
-                    punteroOP=agregarAListaA(punteroOP,matchOP,1);
-                 }else{
-                    ID->numero++;}return OPERADOR;}
-{PUNTUACION}    {   char *matchP;
-                    matchP=(char *)malloc(sizeof(char *));
-                    strcpy(matchP,yytext);
-                    struct nodoTIPOA * ID=buscar(punteroPunt,matchP);
-                    if(ID==NULL){
-                        punteroPunt=agregarAListaA(punteroPunt,matchP,1);
-                    }else{
-                        ID->numero++;
-                    }return PUNTUACION;}
+"++"            {strcpy(yylval.cadena,yytext); return INCREMENTO;}
+"--"            {strcpy(yylval.cadena,yytext); return DECREMENTO;}
+"&&"            {strcpy(yylval.cadena,yytext); return AND;}
+"||"            {strcpy(yylval.cadena,yytext); return OR;}
+"+="            {strcpy(yylval.cadena,yytext); return SUMADIRECTA;}
+"-="            {strcpy(yylval.cadena,yytext); return RESTADIRECTA;}
+"!"             {strcpy(yylval.cadena,yytext); return '!';}
+"<"             {strcpy(yylval.cadena,yytext); return '<';}
+">"             {strcpy(yylval.cadena,yytext); return '>';}
+">="            {strcpy(yylval.cadena,yytext); return MAYORIGUAL;}
+"=<"            {strcpy(yylval.cadena,yytext); return MENORIGUAL};
+"!="            {strcpy(yylval.cadena,yytext); return DESIGUALDAD;}
+"=="            {strcpy(yylval.cadena,yytext); return IGUALDAD;}
+"+"             {return '+';}
+"-"             {return '-';}
+"*"             {return '*';}
+"/"             {return '/';}
+"%"             {return '%';}
+"&"             {return '&';}
+";"             {return ';';}
+","             {return ',';}
+"("             {return '(';}
+")"             {return ')';}
+"{"             {return '{';}
+"}"             {return '}';}
 
-[ \t\n]+
+
+{COMENTARIO} 
+[ \t\n]+ 
+
+.               
 
 %%
 
