@@ -501,53 +501,24 @@ static char *yy_last_accepting_cpos;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "TP3.l"
+#line 1 "TP4.l"
 #define INITIAL 0
-#line 2 "TP3.l"
+#line 2 "TP4.l"
 
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
+#include "TP4.tab.h"
 
-struct nodoTIPOA{
-    char *string;
-    int numero;
-    struct nodoTIPOA* next;
-};
-struct nodoTIPOB{
-    char *string;
-    struct nodoTIPOB* next;
-};
-struct nodoTIPOC{
-    char *string;
-    double mantisa;
-    int parteEntera;
-    struct nodoTIPOC* next;
-};
 
-int acum = 0;
-struct nodoTIPOA *punteroID = NULL;	
-struct nodoTIPOA *punteroLitCad = NULL;
-struct nodoTIPOB *punteroPRes = NULL;
-struct nodoTIPOA *punteroDEC = NULL;
-struct nodoTIPOA *punteroCTEO = NULL;
-struct nodoTIPOA *punteroPunt = NULL;
-struct nodoTIPOA *punteroHex = NULL;
-struct nodoTIPOA *punteroOP = NULL;
-struct nodoTIPOB *punteroCOM = NULL;
-struct nodoTIPOC *punteroReal = NULL;
-struct nodoTIPOA * agregarAListaA(struct nodoTIPOA *puntero, char *nuevaEntrada, int entero);
-struct nodoTIPOB *agregarAListaB(struct nodoTIPOB *puntero, char *nuevaEntrada);
-struct nodoTIPOC *agregarAListaC(struct nodoTIPOC *puntero, char *nuevaEntrada,double flotante, int entero);
-struct nodoTIPOA *buscar(struct nodoTIPOA *puntero, char *match);
-void mostrarListaA(struct nodoTIPOA* puntero);
-void mostrarListaB(struct nodoTIPOB* puntero);
 int octToDec(char oct[]);
 int hexToDec(char *hex);
 double stringToReal(char realC[]);
-double mantiza(double real);
-#line 551 "lex.yy.c"
+
+
+#line 522 "lex.yy.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -698,9 +669,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
 
-#line 58 "TP3.l"
+#line 29 "TP4.l"
 
-#line 704 "lex.yy.c"
+#line 675 "lex.yy.c"
 
 	if ( yy_init )
 		{
@@ -785,76 +756,58 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 59 "TP3.l"
-{ char *matchPR;
-                matchPR=(char *)malloc(sizeof(char *));
-                strcpy(matchPR,yytext);
-                punteroPRes=agregarAListaB(punteroPRes,matchPR);}                
+#line 30 "TP4.l"
+{ strcpy(yylval.cadena,yytext);   return PRESERVADA;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 63 "TP3.l"
-{ char *matchID;
-                matchID=(char *)malloc(sizeof(char *));
-                strcpy(matchID,yytext);
-                struct nodoTIPOA *ID=buscar(punteroID,matchID);
-                if(ID==NULL){
-                    punteroID=agregarAListaA(punteroID,matchID,1);
-                }else{
-                    ID->numero++;}}
+#line 31 "TP4.l"
+{ strcpy(yylval.cadena,yytext);   return ID;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 71 "TP3.l"
-{ char *matchDEC;
-                matchDEC=(char *)malloc(sizeof(char *));
-                strcpy(matchDEC,yytext);
-                acum = acum + atoi(matchDEC); 
-                punteroDEC = agregarAListaA(punteroDEC,matchDEC,acum);
-                }
+#line 32 "TP4.l"
+{ yylval.entero = atoi(yytext);   return NUMI;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 77 "TP3.l"
+#line 33 "TP4.l"
 { char *matchOctal;
                 matchOctal=(char *)malloc(sizeof(char *));
                 strcpy(matchOctal,yytext);
-                punteroCTEO = agregarAListaA(punteroCTEO,matchOctal,octToDec(matchOctal));}
+                yylval.entero = octToDec(matchOctal);
+                return NUMI;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 81 "TP3.l"
-{char *matchHexa;
+#line 38 "TP4.l"
+{ char *matchHexa;
                 matchHexa=(char *)malloc(sizeof(char *));
                 strcpy(matchHexa,yytext);
-                punteroHex = agregarAListaA(punteroHex,matchHexa,hexToDec(matchHexa));}
+                yylval.entero = hexToDec(matchHexa);
+                return NUMI;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 85 "TP3.l"
-{ char *matchReal;
-                matchReal = (char*)malloc(sizeof(char *));
-                strcpy(matchReal,yytext);
-                double real = atof(matchReal), mant = mantiza(real);
-                int realInt = (int)real;
-                punteroReal = agregarAListaC(punteroReal,matchReal,mant,realInt);}                
+#line 43 "TP4.l"
+{ yylval.real = atof(yytext); return NUMR;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 91 "TP3.l"
-{printf("La cadena %s representa una constante caracter\n", yytext);}  
+#line 44 "TP4.l"
+{printf("La cadena %s representa una constante caracter\n", yytext);return CCHAR;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 92 "TP3.l"
+#line 45 "TP4.l"
 {   char *matchLT;
                     matchLT=(char *)malloc(sizeof(char *));
                     strcpy(matchLT,yytext);
-                    punteroLitCad=agregarAListaA(punteroLitCad,matchLT,strlen(matchLT)-2);} 
+                    punteroLitCad=agregarAListaA(punteroLitCad,matchLT,strlen(matchLT)-2);return LCADENA;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 96 "TP3.l"
+#line 49 "TP4.l"
 {char *matchCOM;
                  matchCOM=(char *)malloc(sizeof(char *));
                  strcpy(matchCOM,yytext);
@@ -862,7 +815,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 100 "TP3.l"
+#line 53 "TP4.l"
 {char *matchOP;
                  matchOP=(char *)malloc(sizeof(char *));
                  strcpy(matchOP,yytext);
@@ -870,11 +823,11 @@ YY_RULE_SETUP
                  if(ID==NULL){
                     punteroOP=agregarAListaA(punteroOP,matchOP,1);
                  }else{
-                    ID->numero++;}}
+                    ID->numero++;}return OPERADOR;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 108 "TP3.l"
+#line 61 "TP4.l"
 {   char *matchP;
                     matchP=(char *)malloc(sizeof(char *));
                     strcpy(matchP,yytext);
@@ -883,19 +836,19 @@ YY_RULE_SETUP
                         punteroPunt=agregarAListaA(punteroPunt,matchP,1);
                     }else{
                         ID->numero++;
-                    }}
+                    }return PUNTUACION;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 117 "TP3.l"
+#line 71 "TP4.l"
 
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 119 "TP3.l"
+#line 73 "TP4.l"
 ECHO;
 	YY_BREAK
-#line 899 "lex.yy.c"
+#line 852 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1781,111 +1734,10 @@ int main()
 	return 0;
 	}
 #endif
-#line 119 "TP3.l"
+#line 73 "TP4.l"
 
 
-//
 
-struct nodoTIPOA *agregarAListaA(struct nodoTIPOA *puntero, char *nuevaEntrada, int entero){
-    struct nodoTIPOA *nuevo;
-    nuevo = (struct nodoTIPOA*)malloc(sizeof(struct nodoTIPOA));
-    nuevo->string=nuevaEntrada;
-    nuevo->numero=entero;
-    nuevo->next=NULL;
-    if(puntero!=NULL){
-        struct nodoTIPOA *aux = puntero;
-        while(aux->next!=NULL){
-            aux=aux->next;
-        }
-        aux->next = nuevo;
-    }else{
-        puntero = nuevo;
-    }
-    return puntero;
-}
-
-struct nodoTIPOB *agregarAListaB(struct nodoTIPOB *puntero, char *nuevaEntrada){
-    struct nodoTIPOB *nuevo;
-    nuevo = (struct nodoTIPOB*)malloc(sizeof(struct nodoTIPOB));
-    nuevo->string=nuevaEntrada;
-    nuevo->next=NULL;
-    if(puntero!=NULL){
-        struct nodoTIPOB *aux = puntero;
-        while(aux->next!=NULL){
-            aux=aux->next;
-        }
-        aux->next = nuevo;
-    }else{
-        puntero = nuevo;
-    }
-    return puntero;
-}
-
-struct nodoTIPOC *agregarAListaC(struct nodoTIPOC *puntero, char *nuevaEntrada,double flotante, int entero){
-    struct nodoTIPOC *nuevo;
-    nuevo = (struct nodoTIPOC*)malloc(sizeof(struct nodoTIPOC));
-    nuevo->string=nuevaEntrada;
-    nuevo->mantisa=flotante;
-    nuevo->parteEntera=entero;
-    nuevo->next=NULL;
-    if(puntero!=NULL){
-        struct nodoTIPOC *aux = puntero;
-        while(aux->next!=NULL){
-            aux=aux->next;
-        }
-        aux->next = nuevo;
-    }else{
-        puntero = nuevo;
-    }
-    return puntero;
-}
-
-struct nodoTIPOA *buscar(struct nodoTIPOA *puntero, char *match){
-    struct nodoTIPOA *punteroEncontrado = NULL;
-    int encontrado=0;
-    if(puntero!=NULL){
-        struct nodoTIPOA *aux=puntero;
-        while(aux!=NULL && encontrado==0){
-            if(strcmp(aux->string,match)==0){
-                punteroEncontrado=aux;
-                encontrado=1;
-            }else{
-                aux=aux->next;
-            }   
-        }
-    }
-    return punteroEncontrado;
-}
-
-void mostrarListaA(struct nodoTIPOA *puntero){
-    struct nodoTIPOA *aux=puntero;
-    if(puntero!=NULL){
-        while(aux!=NULL){
-            printf("%s\t%d\n",aux->string,aux->numero);
-            aux=aux->next;
-        }
-    }
-}
-
-void mostrarListaB(struct nodoTIPOB *puntero){
-    struct nodoTIPOB *aux=puntero;
-    if(puntero!=NULL){
-        while(aux!=NULL){
-            printf("%s\n",aux->string);
-            aux=aux->next;
-        }
-    }
-}
-
-void mostrarListaC(struct nodoTIPOC *puntero){
-    struct nodoTIPOC *aux=puntero;
-    if(puntero!=NULL){
-        while(aux!=NULL){
-            printf("%s\t%.10f\t%d\n",aux->string,aux->mantisa,aux->parteEntera);
-            aux=aux->next;
-        }
-    }
-}
 int octToDec(char oct[]){
 	int longitud=0,dec=0,potencia=0;
     for(longitud=0;oct[longitud]!='\0';longitud++);
@@ -1900,45 +1752,11 @@ int hexToDec(char *hex){
     return (int)strtol(hex, NULL, 0);
 }
 
-double mantiza(double real){
-	return (real - (double)((int)real));
-}
-
-int yywrap(){} 
+int yywrap(){}
 
 int main(){
     yyout = fopen("salida.txt","w");
     yyin = fopen("entrada.txt","r");
     yylex();
-    printf("-----------Listado de Palabras reservadas-----------\n");
-    printf("Palabra reservada\n");
-    mostrarListaB(punteroPRes);
-    printf("-----------Listado de identificadores-----------\n");
-    printf("Identificador\tCantidad de veces que aparece\n");
-    mostrarListaA(punteroID);   
-    printf("-----------Listado de Constantes Decimales-----------\n");
-    printf("Cte decimal\tValor acumulado\n");
-    mostrarListaA(punteroDEC);
-    printf("-----------Listado de Constantes octales-----------\n");
-    printf("Cte octal\tValor decimal\n");
-    mostrarListaA(punteroCTEO);
-    printf("-----------Listado de Constantes Hexadecimales-----------\n");
-    printf("Cte hexadecimal\tValor decimal\n");
-    mostrarListaA(punteroHex);
-    printf("-----------Listado de Constantes Reales-----------\n");
-    printf("Cte real\tMantiza\tValor entero\n");
-    mostrarListaC(punteroReal);
-    printf("-----------Listado de Literales cadena-----------\n");
-    printf("Literal Cadena\tLongitud\n");
-    mostrarListaA(punteroLitCad);
-    printf("-----------Listado de Caracteres de puntuacion-----------\n");
-    printf("Caracter de puntuacion\tCantidad de veces que aparece\n");
-    mostrarListaA(punteroPunt);
-    printf("-----------Listado de Comentarios-----------\n");
-    printf("Comentario\n");
-    mostrarListaB(punteroCOM);
-    printf("-----------Listado de operadores-----------\n");
-    printf("Operador\tCantidad de veces que aparece\n");
-    mostrarListaA(punteroOP);
     return 0;
 }

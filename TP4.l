@@ -4,12 +4,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include<ctype.h>
+#include <ctype.h>
+#include "TP4.tab.h"
+
 
 int octToDec(char oct[]);
 int hexToDec(char *hex);
 double stringToReal(char realC[]);
-int yylineno;
+
 
 %}
 PRESERVADA	while|do|if|else|for|int|char|return|case|switch|auto|double|struct|break|long|enum|register|typedef|extern|union|const|float|short|unsigned|continue|signed|void|default|goto|sizeof|volatile|static
@@ -25,12 +27,9 @@ OPERADOR	"++"|"*"|"+"|"&"|"!"|"sizeof"|"/"|"%"|"<"|"<="|">"|">="|"=="|"!="|"&&"|
 PUNTUACION  ";"|","|"("|")"|"{"|"}"
 
 %%
-{PRESERVADA}  { strcpy(yylval.cadena,yytext);
-                return PR;}                
-{ID}          { strcpy(yylval.cadena,yytext);
-                return ID;}
-{CEDECIMAL}   { yylval.entero = atoi(yytext);
-                return NUMI;}
+{PRESERVADA}  { strcpy(yylval.cadena,yytext);   return PRESERVADA;}
+{ID}          { strcpy(yylval.cadena,yytext);   return ID;}
+{CEDECIMAL}   { yylval.entero = atoi(yytext);   return NUMI;}
 {CEOCTAL}     { char *matchOctal;
                 matchOctal=(char *)malloc(sizeof(char *));
                 strcpy(matchOctal,yytext);
@@ -41,13 +40,12 @@ PUNTUACION  ";"|","|"("|")"|"{"|"}"
                 strcpy(matchHexa,yytext);
                 yylval.entero = hexToDec(matchHexa);
                 return NUMI;}
-{CREAL}       { yylval.real = atof(yytext);
-                return NUMR;}                
-{CCHAR}         {printf("La cadena %s representa una constante caracter\n", yytext);}  
+{CREAL}       { yylval.real = atof(yytext); return NUMR;}
+{CCHAR}         {printf("La cadena %s representa una constante caracter\n", yytext);return CCHAR;}
 {LITERALCADENA} {   char *matchLT;
                     matchLT=(char *)malloc(sizeof(char *));
                     strcpy(matchLT,yytext);
-                    punteroLitCad=agregarAListaA(punteroLitCad,matchLT,strlen(matchLT)-2);} 
+                    punteroLitCad=agregarAListaA(punteroLitCad,matchLT,strlen(matchLT)-2);return LCADENA;}
 {COMENTARIO} 	{char *matchCOM;
                  matchCOM=(char *)malloc(sizeof(char *));
                  strcpy(matchCOM,yytext);
@@ -59,7 +57,7 @@ PUNTUACION  ";"|","|"("|")"|"{"|"}"
                  if(ID==NULL){
                     punteroOP=agregarAListaA(punteroOP,matchOP,1);
                  }else{
-                    ID->numero++;}}
+                    ID->numero++;}return OPERADOR;}
 {PUNTUACION}    {   char *matchP;
                     matchP=(char *)malloc(sizeof(char *));
                     strcpy(matchP,yytext);
@@ -68,13 +66,9 @@ PUNTUACION  ";"|","|"("|")"|"{"|"}"
                         punteroPunt=agregarAListaA(punteroPunt,matchP,1);
                     }else{
                         ID->numero++;
-                    }}
-"&&"            {return AND} 
-"=="            {return COMPARACION}
-">="            {return COMPARACION}
-"++"            {return INCREMENTO}
+                    }return PUNTUACION;}
 
-[ \t\n]+          
+[ \t\n]+
 
 %%
 
@@ -93,7 +87,7 @@ int hexToDec(char *hex){
     return (int)strtol(hex, NULL, 0);
 }
 
-int yywrap(){} 
+int yywrap(){}
 
 int main(){
     yyout = fopen("salida.txt","w");
