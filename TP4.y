@@ -47,11 +47,8 @@
 %token <cadena> SIZEOF
 %token <cadena> SWITCH
 %token <cadena> CASE
-
-
-
-
-
+%token <cadena> BREAK
+%token <cadena> CONTINUE
 
 %type <cadena> declaracion
 %type <cadena> listaIdentificadores
@@ -89,11 +86,15 @@ line: '\n'
 declaracion:  TIPODATO listaIdentificadores  ';' 
             | {printf("funciono DOU!")}
 ;
+
 listaIdentificadores: identificadorA
                     | listaIdentificadores ',' identificadorA
 ;
 identificadorA: ID
               | ID '=' expresion
+              | '*'ID  
+              | ID'['expresion']' 
+              | ID'[' ']'
 ;
 expresion: NUMI
 ;
@@ -110,7 +111,7 @@ listaDeDeclaraciones:  declaracion
 listaDeSentencias:  sentencia
                     |listaDeSentencias sentencia
 ;
-sentenciaExpresion: ';'{"opcional xd"}        
+sentenciaExpresion: ';'       
                     |expresion
 ;
 sentenciaSeleccion: IF'('expresion')' sentencia
@@ -128,9 +129,28 @@ sentenciaIteracion: WHILE '(' expresion ')' sentencia
                     |FOR '(' expresion ';' expresion ';' ')' sentencia 
                     |FOR '(' expresion ';' expresion ';' expresion ')' sentencia 
 ;
-sentenciaSalto:     RETURN ';'
-                    |RETURN expresion ';'
+sentenciaSalto:  ';'
+                |CONTINUE';'
+                |BREAK ';'
+                |RETURN expresion ';'
 ;
+definicionFuncion: type ID '('listaDeArgumentos')' sentenciaCompuesta
+;
+
+declaracionFuncion: type ID '('listaDeArgumentos')'';'
+;
+type: TIPODATO
+      |VOID
+;
+listaDeArgumentos: argumento
+                    |listaDeArgumentos ',' argumento
+;
+argumento: TIPODATO ID
+          |TIPODATO'*' ID
+          |TIPODATO'['']'ID
+;
+
+
 %%
 
 yyerror (s)  /* Llamada por yyparse ante un error */

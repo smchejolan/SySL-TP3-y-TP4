@@ -40,6 +40,8 @@ STRUCT      struct
 SIZEOF      sizeof
 TIPODATO    int|float|double|char|long|short
 RETURN      return
+CONTINUE    continue
+BREAK       break
 
 
 
@@ -59,7 +61,9 @@ RETURN      return
 {SWITCH}        {strcpy(yylval.cadena,yytext);   return SWITCH;}
 {CASE}          {strcpy(yylval.cadena,yytext);   return CASE;}
 {SIZEOF}        {strcpy(yylval.cadena,yytext);   return SIZEOF;}
-{CEDECIMAL}   { yylval.entero = atoi(yytext);   return NUMI;}
+{BREAK}         {strcpy(yylval.cadena,yytext);   return BREAK;}
+{CONTINUE}      {strcpy(yylval.cadena,yytext);   return CONTINUE;}
+{CEDECIMAL}     {yylval.entero = atoi(yytext);   return NUMI;}
 {CEOCTAL}     { char *matchOctal;
                 matchOctal=(char *)malloc(sizeof(char *));
                 strcpy(matchOctal,yytext);
