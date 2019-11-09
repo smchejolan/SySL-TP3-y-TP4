@@ -110,7 +110,7 @@ listaDeDeclaraciones:  declaracion
 listaDeSentencias:  sentencia
                     |listaDeSentencias sentencia
 ;
-sentenciaExpresion: {"opcional xd"}        
+sentenciaExpresion: ';'{"opcional xd"}        
                     |expresion
 ;
 sentenciaSeleccion: IF'('expresion')' sentencia
