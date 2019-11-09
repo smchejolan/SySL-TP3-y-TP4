@@ -14,20 +14,13 @@ double stringToReal(char realC[]);
 
 
 %}
-PRESERVADA	auto|break|register|typedef|extern|union|const|unsigned|continue|signed|void|default|goto|sizeof|volatile|static
-ID       	[a-zA-Z_][a-zA-Z0-9_]*
-CEDECIMAL 	[1-9][0-9]*
-CEOCTAL		0[0-7]*
-CEHEXA		0[xX][A-Fa-f0-9]+
-CREAL	    [0-9]*"."[0-9]+([eE]([\+\-]?)[0-9]+)?[FfLlDd]?|[0-9]+"."([eE][\+\-]?[0-9]+)?[FfLlDd]?|[0-9]+([eE][\+\-]?[0-9]+)[FfLlDd]?
-CCHAR		"'"."'"
-LITERALCADENA \"(\\.|[^\\"])*\"
-COMENTARIO  "//".*\n|"/*"(.|\n)*"*/"
+PRESERVADA	auto|break|register|extern|union|const|continue|default|goto|volatile|static
 CHAR        char
 FLOAT       float
 LONG        long
 DOUBLE      double
 SHORT       short
+VOID        void
 WHILE       while
 IF          if
 ELSE        else
@@ -38,20 +31,23 @@ SWITCH      switch
 CASE        case
 STRUCT      struct
 SIZEOF      sizeof
-TIPODATO    int|float|double|char|long|short
+TIPODATO    int|float|double|char|long|short|signed|unsigned|
 RETURN      return
-CONTINUE    continue
-BREAK       break
-
-
-
+ID       	[a-zA-Z_][a-zA-Z0-9_]*
+CEDECIMAL 	[1-9][0-9]*
+CEOCTAL		0[0-7]*
+CEHEXA		0[xX][A-Fa-f0-9]+
+CREAL	    [0-9]*"."[0-9]+([eE]([\+\-]?)[0-9]+)?[FfLlDd]?|[0-9]+"."([eE][\+\-]?[0-9]+)?[FfLlDd]?|[0-9]+([eE][\+\-]?[0-9]+)[FfLlDd]?
+CCHAR		"'"."'"
+LITERALCADENA \"(\\.|[^\\"])*\"
+COMENTARIO  "//".*\n|"/*"(.|\n)*"*/"
 
 %%
 {PRESERVADA}    {strcpy(yylval.cadena,yytext); return PRESERVADA;}
-{TIPODATO}      {strcpy(yylval.cadena,yytext); return TIPODATO;}
+{TIPODATO}      {strcpy(yylval.cadena,yytext);printf("%s",yytext); return TIPODATO;}
 {RETURN}        {strcpy(yylval.cadena,yytext); return RETURN;}
-{ID}            {strcpy(yylval.cadena,yytext);   return ID;}
 {WHILE}         {strcpy(yylval.cadena,yytext);   return WHILE;}
+{VOID}          {strcpy(yylval.cadena,yytext);   return VOID;}
 {DO}            {strcpy(yylval.cadena,yytext);   return DO;}
 {IF}            {strcpy(yylval.cadena,yytext);   return IF;}
 {ELSE}          {strcpy(yylval.cadena,yytext);   return ELSE;}
@@ -61,9 +57,8 @@ BREAK       break
 {SWITCH}        {strcpy(yylval.cadena,yytext);   return SWITCH;}
 {CASE}          {strcpy(yylval.cadena,yytext);   return CASE;}
 {SIZEOF}        {strcpy(yylval.cadena,yytext);   return SIZEOF;}
-{BREAK}         {strcpy(yylval.cadena,yytext);   return BREAK;}
-{CONTINUE}      {strcpy(yylval.cadena,yytext);   return CONTINUE;}
-{CEDECIMAL}     {yylval.entero = atoi(yytext);   return NUMI;}
+{ID}            {strcpy(yylval.cadena,yytext);   return ID;}
+{CEDECIMAL}   { yylval.entero = atoi(yytext);   return NUMI;}
 {CEOCTAL}     { char *matchOctal;
                 matchOctal=(char *)malloc(sizeof(char *));
                 strcpy(matchOctal,yytext);
@@ -75,24 +70,27 @@ BREAK       break
                 yylval.entero = hexToDec(matchHexa);
                 return NUMI;}
 {CREAL}       { yylval.real = atof(yytext); return NUMR;}
-{CCHAR}         {printf("La cadena %s representa una constante caracter\n", yytext);return CCHAR;}
-{LITERALCADENA} {   char *matchLT;
-                    matchLT=(char *)malloc(sizeof(char *));
+{CCHAR}         { char *matchCH;
+                    matchCH=(char *)malloc(sizeof(char *));
                     strcpy(matchLT,yytext);
-                    punteroLitCad=agregarAListaA(punteroLitCad,matchLT,strlen(matchLT)-2);return LCADENA;}
+                    yylval.char = matchLT[0];
+                    return CCHAR;}
+{LITERALCADENA} {   strcpy(yylval.cadena,yytext);return LCADENA;}
 "++"            {strcpy(yylval.cadena,yytext); return INCREMENTO;}
 "--"            {strcpy(yylval.cadena,yytext); return DECREMENTO;}
 "&&"            {strcpy(yylval.cadena,yytext); return AND;}
 "||"            {strcpy(yylval.cadena,yytext); return OR;}
 "+="            {strcpy(yylval.cadena,yytext); return SUMADIRECTA;}
 "-="            {strcpy(yylval.cadena,yytext); return RESTADIRECTA;}
-"!"             {strcpy(yylval.cadena,yytext); return '!';}
-"<"             {strcpy(yylval.cadena,yytext); return '<';}
-">"             {strcpy(yylval.cadena,yytext); return '>';}
 ">="            {strcpy(yylval.cadena,yytext); return MAYORIGUAL;}
 "=<"            {strcpy(yylval.cadena,yytext); return MENORIGUAL};
 "!="            {strcpy(yylval.cadena,yytext); return DESIGUALDAD;}
 "=="            {strcpy(yylval.cadena,yytext); return IGUALDAD;}
+"->"            {strcpy(yylval.cadena,yytext); return PERTENCECE;}
+"."             {strcpy(return '.';)}   
+"!"             {return '!';}
+"<"             {return '<';}
+">"             {return '>';}
 "+"             {return '+';}
 "-"             {return '-';}
 "*"             {return '*';}
