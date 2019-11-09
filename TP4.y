@@ -93,10 +93,18 @@ listaIdentificadores: identificadorA
 identificadorA: ID
               | ID '=' expresion
               | '*'ID  
+              | '*'ID '=' expresion
+              | '*'ID '=' ID
+              | '*'ID '=' '&'ID
               | ID'['expresion']' 
-              | ID'[' ']'
+              | ID'['expresion']' = {listaDeExpresiones} 
+              | ID'[' ']' = {listaDeExpresiones}
 ;
-expresion: NUMI
+listaDeExpresiones: expresion
+                    |listaDeExpresiones ',' expresion
+;
+
+expresion: expresionAsignacion
 ;
 sentencia: sentenciaCompuesta sentenciaExpresion sentenciaSeleccion sentenciaIteracion sentenciaSalto 
 ;
