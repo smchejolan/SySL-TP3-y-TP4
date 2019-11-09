@@ -97,8 +97,8 @@ identificadorA: ID
               | '*'ID '=' ID
               | '*'ID '=' '&'ID
               | ID'['expresion']' 
-              | ID'['expresion']' = {listaDeExpresiones} 
-              | ID'[' ']' = {listaDeExpresiones}
+              | ID'['expresion']' '=' '{'listaDeExpresiones'}' 
+              | ID'[' ']' '=' '{'listaDeExpresiones'}'
 ;
 listaDeExpresiones: expresion
                     |listaDeExpresiones ',' expresion
