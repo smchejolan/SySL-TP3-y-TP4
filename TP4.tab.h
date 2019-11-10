@@ -39,18 +39,45 @@
    /* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
    enum yytokentype {
-     NUMR = 258,
-     NUMI = 259,
-     TIPODATO = 260,
-     ID = 261,
-     OP = 262,
-     CCHAR = 263,
-     PRESERVADA = 264,
-     LCADENA = 265,
-     AND = 266,
-     COMPARACION = 267,
-     INCREMENTO = 268,
-     PUNTUACION = 269
+     NUM = 258,
+     LCADENA = 259,
+     ID = 260,
+     TIPODATO = 261,
+     PRESERVADA = 262,
+     MODALIDAD = 263,
+     AND = 264,
+     PUNTUACION = 265,
+     INCREMENTO = 266,
+     DECREMENTO = 267,
+     SUMADIRECTA = 268,
+     RESTADIRECTA = 269,
+     OR = 270,
+     VOID = 271,
+     MAYORIGUAL = 272,
+     MENORIGUAL = 273,
+     PERTENECE = 274,
+     DESIGUALDAD = 275,
+     IGUALDAD = 276,
+     RETURN = 277,
+     IF = 278,
+     DO = 279,
+     WHILE = 280,
+     ELSE = 281,
+     FOR = 282,
+     TYPEDEF = 283,
+     STRUCT = 284,
+     SIZEOF = 285,
+     SWITCH = 286,
+     CASE = 287,
+     BREAK = 288,
+     CONTINUE = 289,
+     CONTROLOTRA = 290,
+     OPERADOR = 291,
+     CONDICION = 292,
+     DEFAULT = 293,
+     NEG = 294,
+     POS = 295,
+     PUNT = 296
    };
 #endif
 
@@ -61,17 +88,20 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 12 "TP4.y"
+#line 13 "TP4.y"
 
-  double real;
-  int entero;
-  char * cadena;
+  struct{
+    char cadena[50];
+    double valor;
+    int tipo;
+  }s;
   char caracter;
+  char* cadena;
 
 
 
 /* Line 1676 of yacc.c  */
-#line 75 "TP4.tab.h"
+#line 105 "TP4.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
