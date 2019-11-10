@@ -1,11 +1,10 @@
-/* Calculadora de notacion infija (usual) */
-
 %{
 #include <math.h>
 #include <stdio.h>
-#include <ctype.h>
 #include <stdlib.h>
 
+extern FILE *yyin;
+extern FILE *yyout;
 %}
 
 %union
@@ -14,143 +13,99 @@
     char* cadena;
     double valor;
     int tipo;
-  }tk;
+  }token;
   char caracter;
   char* cadena;
 }
 
-%start sentencia
+%start input
 
-%token <tk> NUMR
-%token <tk> NUMI
-%token <tk> TIPODATO
-%token <tk> ID
-%token <tk> CCHAR
-%token <cadena> PRESERVADA 
-%token <cadena> LCADENA
-%token <cadena> AND
-%token <cadena> PUNTUACION
-%token <cadena> INCREMENTO
-%token <cadena> DECREMENTO
-%token <cadena> SUMADIRECTA
-%token <cadena> RESTADIRECTA
-%token <cadena> OR
-%token <cadena> VOID
-%token <cadena> MAYORIGUAL
-%token <cadena> MENORIGUAL
-%token <cadena> DESIGUALDAD
-%token <cadena> IGUALDAD
-%token <cadena> RETURN
-%token <cadena> IF
-%token <cadena> DO
-%token <cadena> WHILE
-%token <cadena> ELSE
-%token <cadena> FOR
-%token <cadena> TYPEDEF
-%token <cadena> STRUCT
-%token <cadena> SIZEOF
-%token <cadena> SWITCH
-%token <cadena> CASE
-%token <cadena> BREAK
-%token <cadena> CONTINUE
 
-%type <tk> declaracion
-%type <tk> listaIdentificadores
-%type <tk> identificadorA
-%type <tk> sentencia
-%type <tk> sentenciaCompuesta
-%type <tk> sentenciaExpresion
-%type <tk> sentenciaIteracion
-%type <tk> sentenciaSalto
-%type <tk> listaDeSentencias
-%type <tk> listaDeDeclaraciones
-%type <tk> sentenciaSeleccion
-%type <tk> expresion
-%type <tk> expresionCondicional
-%type <tk> expresionAsignacion
-%type <tk> expresionOr
-%type <tk> expresionAnd
-%type <tk> expresionIgualdad
-%type <tk> expresionRelacional
-%type <tk> expresionAditiva
-%type <tk> expresionMultiplicativa
-%type <tk> expresionUnaria
-%type <tk> operadorUnario
-%type <tk> operadorComparacion
-%type <tk> operadorRelacional
-%type <tk> expresionPostfijo
-%type <tk> listaDeArgumentos
-%type <tk> listaDeParametros
-%type <tk> listaDeExpresiones
-%type <tk> expresionPrimaria
-%type <tk> parametro 
+%token <token> NUM 
+%token <cadena> TIPODATO
+%token <token> LCADENA
+%token <token> ID
+%token <cadena> PRESERVADA MODALIDAD AND PUNTUACION INCREMENTO DECREMENTO SUMADIRECTA RESTADIRECTA OR VOID MAYORIGUAL MENORIGUAL DESIGUALDAD IGUALDAD RETURN IF DO WHILE ELSE FOR TYPEDEF STRUCT SIZEOF SWITCH CASE BREAK CONTINUE CONTROLOTRA OPERADOR CONDICION DEFAULT
+%type <token> expresion expresionAditiva expresionAnd expresionAsignacion expresionCondicional expresionIgualdad expresionMultiplicativa expresionOr expresionPostfijo expresionPrimaria expresionRelacional expresionUnaria
 
-%left '+' '-'
-%right '*' '/'
+%left '+' '-' '*' '/' IGUALDAD DESIGUALDAD AND OR
+%right  '&' '!' INCREMENTO DECREMENTO SIZEOF ':' '?'
 %nonassoc '^'
 
 
 %% /* A continuacion las reglas gramaticales y las acciones */
 
-input:    /* vac�o */
-        | input line
+input: programa 
 ;
-
-line: '\n'
-    | declaracion {printf("Fin linea \n");}
-		| sentenciaCompuesta {printf("Fin linea \n");}
-		| sentenciaExpresion {printf("Fin linea\n");}
-		| sentenciaSeleccion {printf("Fin linea \n");}
-		| sentenciaIteracion {printf("Fin linea \n");}
-		| sentenciaSalto {printf("Fin linea \n");}
-		| error 
+programa: global
+          |programa global
 ;
-
-sentencia: sentenciaCompuesta sentenciaExpresion sentenciaSeleccion sentenciaIteracion sentenciaSalto 
+global: declaracion
+        |definicionFuncion
 ;
-sentenciaCompuesta: '{' '}'
-                    |'{' listaDeDeclaraciones '}'
-                    |'{' listaDeSentencias '}'
-                    |'{' listaDeDeclaraciones listaDeSentencias'}' 
+declaracion:  modalidadOP TIPODATO listaIdentificadores  ';' 
+              modalidadOP declarancionDeStruct';'
+              modalidadOP declaracionFuncion';'
 ;
-listaDeDeclaraciones:  declaracion
-                    | listaDeDeclaraciones declaracion 
-;             
-listaDeSentencias:  sentencia
-                    |listaDeSentencias sentencia
+modalidadOP: 
+            |MODALIDAD
 ;
-sentenciaExpresion: ';'       
-                    |expresion
+tipoDeDato: TIPODATO
+            |STRUCT ID
 ;
-sentenciaSeleccion: IF'('expresion')' sentencia
-                    |IF'('expresion')' sentencia ELSE sentencia
-                    |SWITCH'('expresion')' sentencia
+type: tipoDeDato
+      |VOID
 ;
-sentenciaIteracion: WHILE '(' expresion ')' sentencia
-                    |DO sentencia WHILE'(' expresion ')' ';'
-                    |FOR '('';'';'')' sentencia 
-                    |FOR '(' expresion ';'';'')' sentencia 
-                    |FOR '('  ';' expresion ';'  ')' sentencia 
-                    |FOR '('  ';'  ';' expresion ')' sentencia 
-                    |FOR '('  ';' expresion ';' expresion ')' sentencia 
-                    |FOR '(' expresion ';'  ';' expresion ')' sentencia 
-                    |FOR '(' expresion ';' expresion ';' ')' sentencia 
-                    |FOR '(' expresion ';' expresion ';' expresion ')' sentencia 
+listaDeDeclaracionesStructOP: 
+                              |listaDeDeclaracionesStruct
 ;
-sentenciaSalto:  ';'
-                |CONTINUE';'
-                |BREAK ';'
-                |RETURN expresion ';'
+listaDeDeclaracionesStruct: declaracionParametrosStruct
+                            |listaDeDeclaracionesStruct declaracionParametrosStruct
 ;
-declaracion:  TIPODATO listaIdentificadores  ';' 
-            | {printf("funciono DOU!")}
+declaracionParametrosStruct: modalidadOP tipoDeDato ID';'
+                            |modalidadOP tipoDeDato '*'ID';'
+                            |modalidadOP tipoDeDato ID'['expresion']'';'
+                            |modalidadOP tipoDeDato ID'['']'';'
+;
+listaIdentificadores: identificadorA
+                    | listaIdentificadores ',' identificadorA
+;
+identificadorA: declaracionNormal
+                |declaracionArray
+                |declaracionPuntero
+;
+declaracionNormal: ID
+                   |ID '=' expresion
+;
+declaracionPuntero: '*'ID asignarPunteroOP
+;
+asignarPunteroOP: 
+                  |asignarPuntero
+;
+asignarPuntero: '=' expresion
+                |'=' ID
+                |'=' '&'ID
+;            
+declaracionArray: ID'['expresion']' asignarArrayOp
+                  |ID'['']' asignarArray
+;
+asignarArrayOp: 
+                  |asignarArray
+;
+asignarArray: '=' '{'listaDeExpresiones'}'
+;
+declaracionFuncion: type ID '('listaDeParametrosOP')'
+;
+declarancionDeStruct: STRUCT ID
+                      STRUCT ID '{'listaDeDeclaracionesStructOP'}'
+                      STRUCT ID '{'listaDeDeclaracionesStructOP'}'
+                      STRUCT ID '{'listaDeDeclaracionesStructOP'}'ID
+                      STRUCT '{'listaDeDeclaracionesStructOP'}'ID
 ;
 definicionFuncion: type ID '('listaDeParametros')' sentenciaCompuesta
 ;
-declaracionFuncion: type ID '('listaDeParametros')'';'
-;
-type: TIPODATO
-      |VOID
+listaDeParametrosOP: 
+                      |listaDeParametros
 ;
 listaDeParametros: parametro
                   |listaDeParametros ',' parametro
@@ -159,72 +114,101 @@ parametro: TIPODATO ID
           |TIPODATO'*' ID
           |TIPODATO'['']'ID
 ;
-listaIdentificadores: identificadorA
-                    | listaIdentificadores ',' identificadorA
+sentencia: sentenciaCompuesta sentenciaExpresion sentenciaSeleccion sentenciaIteracion sentenciaSalto 
 ;
-identificadorA: ID
-              | ID '=' expresion
-              | '*'ID  
-              | '*'ID '=' expresion
-              | '*'ID '=' ID
-              | '*'ID '=' '&'ID
-              | ID'['expresion']' 
-              | ID'['expresion']' '=' '{'listaDeExpresiones'}' 
-              | ID'[' ']' '=' '{'listaDeExpresiones'}'
+sentenciaCompuesta: '{' '}' 
+                    '{'listaCompuesta'}'
+;
+listaCompuesta: elementoDeSentencia
+                |listaCompuesta elementoDeSentencia
+;
+elementoDeSentencia: listaDeFunciones|listaDeDeclaraciones|listaDeSentencias
+;
+listaDeFunciones: definicionFuncion
+                  listaDeFunciones definicionFuncion
+;
+listaDeDeclaraciones:  declaracion
+                    | listaDeDeclaraciones declaracion 
+;             
+listaDeSentencias:  sentencia
+                    |listaDeSentencias sentencia
+;
+sentenciaExpresion: ';'       
+                    |expresion';'
+;
+sentenciaSeleccion: IF'('expresion')' sentencia
+                    |IF'('expresion')' sentencia ELSE sentencia
+                    |SWITCH'('expresion')' sentencia
+;
+sentenciaIteracion: WHILE '(' expresion ')' sentencia
+                    |DO sentencia WHILE'(' expresion ')' ';'
+                    |FOR '(' expresionOP ';' expresionOP ';' expresionOP ')' sentencia 
+;
+sentenciaSalto:  ';'
+                |CONTINUE';'
+                |BREAK ';'
+                |RETURN expresion ';'
 ;
 listaDeExpresiones: expresion
                     |listaDeExpresiones ',' expresion
 ;
-
-expresion: expresionAsignacion
+expresionOP: 
+              |expresion
 ;
-expresionAsignacion: expresionCondicional
-                     |expresionUnaria operacionAsignacion expresionAsignacion
+expresion: expresionAsignacion {$<token.tipo>$ = $<token.tipo>1;}
+;
+expresionAsignacion: expresionCondicional {$<token.tipo>$ = $<token.tipo>1;}
+                     |expresionUnaria operacionAsignacion expresionAsignacion  {if(){$<token.tipo>$ = $<token.tipo>1;} } //hacer lvalue y control de tipos 
 ;
 operacionAsignacion: '='|SUMADIRECTA|RESTADIRECTA
 ;
-expresionCondicional: expresionOr
-                      |expresionOr '?' expresion ':' expresion
+expresionCondicional: expresionOr {$<token.tipo>$ = $<token.tipo>1;}
+                      |expresionOr '?' expresion ':' expresion  {$<token.tipo>$ = 1;}
 ;
-expresionOr: expresionAnd
-            |expresionOr OR expresionAnd
+expresionOr: expresionAnd {$<token.tipo>$ = $<token.tipo>1;}
+            |expresionOr OR expresionAnd  {$<token.tipo>$ = 1;}
 ;
-expresionAnd: expresionIgualdad 
-             |expresionAnd AND expresionIgualdad
+expresionAnd: expresionIgualdad  {$<token.tipo>$ = $<token.tipo>1;}
+             |expresionAnd AND expresionIgualdad  {$<token.tipo>$ = 1;}
 ;
-expresionIgualdad: expresionRelacional
-                  | expresionIgualdad operadorComparacion expresionRelacional 
+expresionIgualdad: expresionRelacional {$<token.tipo>$ = $<token.tipo>1;}
+                  | expresionIgualdad operadorComparacion expresionRelacional  {$<token.tipo>$ = 1;}
 ;
 operadorComparacion: IGUALDAD DESIGUALDAD
 ;
-expresionRelacional: expresionAditiva
-                     |expresionRelacional operadorRelacional expresionAditiva
+expresionRelacional: expresionAditiva {$<token.tipo>$ = $<token.tipo>1;}
+                     |expresionRelacional operadorRelacional expresionAditiva  {$<token.tipo>$ = 1;}
 ;
 operadorRelacional: '>' | '<' | MENORIGUAL | MAYORIGUAL
 ;
-expresionAditiva: expresionMultiplicativa
-                  |expresionAditiva '+' expresionMultiplicativa
-                  |expresionAditiva '-' expresionMultiplicativa
+expresionAditiva: expresionMultiplicativa  {$<token.tipo>$ = $<token.tipo>1;}
+                  |expresionAditiva '+' expresionMultiplicativa  {$<token.tipo>$ = $<token.tipo>1;}
+                  |expresionAditiva '-' expresionMultiplicativa  {$<token.tipo>$ = $<token.tipo>1;}
 ;
-expresionMultiplicativa:  expresionUnaria
+expresionMultiplicativa:  expresionUnaria {$<token.tipo>$ = $<token.tipo>1;}
                           | expresionMultiplicativa '*' expresionUnaria
                           | expresionMultiplicativa '/' expresionUnaria
 ;
-expresionUnaria: expresionPostfijo
-                 | INCREMENTO expresionUnaria
-                 | DECREMENTO expresionUnaria
-                 | operadorUnario expresionUnaria
+expresionUnaria: expresionPostfijo  {$<token.tipo>$ = $<token.tipo>1;}
+                 | INCREMENTO expresionUnaria  {$<token.tipo>$ = $<token.tipo>1;}
+                 | DECREMENTO expresionUnaria {$<token.tipo>$ = $<token.tipo>1;}
+                 | operadorUnario expresionUnaria {$<token.tipo>$ = $<token.tipo>1;}
+                 | '-' expresionUnaria %prec NEG {$<token.tipo>$ = $<token.tipo>1;}
+                 | '+' expresionUnaria %prec POS {$<token.tipo>$ = $<token.tipo>1;}
+                 | '*' expresionUnaria %prec PUNT {$<token.tipo>$ = $<token.tipo>1;}
 ;
-operadorUnario: '&'|'*'|'-'|'!'
+operadorUnario: '&'|'!'
 ;
-expresionPostfijo: expresionPrimaria
+expresionPostfijo: expresionPrimaria  {$<token.tipo>$ = $<token.tipo>1;}
                   |expresionPostfijo'['expresion']'
                   |expresionPostfijo'('listaDeArgumentos')'
 ;
-expresionPrimaria: CCHAR|NUMI|NUMR
-;
 listaDeArgumentos: expresionAsignacion
                    |listaDeArgumentos ',' expresionAsignacion
+;
+expresionPrimaria: NUM    {$<token.tipo>$ = $<token.tipo>1;}
+                  |ID      {$<token.tipo>$ = $<token.tipo>1;}
+                  |LCADENA  {$<token.tipo>$ = $<token.tipo>1;}
 ;
 
 
@@ -232,7 +216,7 @@ listaDeArgumentos: expresionAsignacion
 
 %%
 
-yyerror (s)  /* Llamada por yyparse ante un error */
+yyerror (s)  
       char *s;
 {
    printf ("%s\n", s);
