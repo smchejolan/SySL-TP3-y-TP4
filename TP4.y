@@ -2,219 +2,223 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include "funciones.h"
 
 int flag_error=0;
 extern FILE *yyout;
 extern FILE *yyin;
 
+
+struct nodoId *punteroId=NULL;
+struct nodoFuncion *punteroFunc=NULL;
+struct nodoVariable *punteroVariables=NULL;
+struct nodoFuncion *funcionActual=NULL;
+struct nodoVariable *parametros=NULL;
+int funciones=0;
 %}
 
 %union
 {
-  struct{
+    struct{
     char cadena[50];
     double valor;
     int tipo;
-  }s;
-  char caracter;
-  char* cadena;
+  }s; 
 }
 
-%start expresionPrimaria
+%start input
 
 
 %token<s> NUM LCADENA ID
-%token<cadena> TIPODATO PRESERVADA MODALIDAD AND PUNTUACION INCREMENTO DECREMENTO SUMADIRECTA RESTADIRECTA OR VOID MAYORIGUAL MENORIGUAL PERTENECE DESIGUALDAD IGUALDAD RETURN IF DO WHILE ELSE FOR TYPEDEF STRUCT SIZEOF SWITCH CASE BREAK CONTINUE CONTROLOTRA OPERADOR CONDICION DEFAULT
+%token<s> TIPODATO PRESERVADA MODALIDAD AND PUNTUACION INCREMENTO DECREMENTO SUMADIRECTA RESTADIRECTA OR VOID MAYORIGUAL MENORIGUAL PERTENECE DESIGUALDAD IGUALDAD RETURN IF DO WHILE ELSE FOR TYPEDEF STRUCT SIZEOF SWITCH CASE BREAK CONTINUE CONTROLOTRA OPERADOR CONDICION DEFAULT
 
-%left '+' '-' '*' ',' '/' IGUALDAD DESIGUALDAD AND OR
-%right  '&' '!' INCREMENTO DECREMENTO SIZEOF ':' '?' '=' SUMADIRECTA RESTADIRECTA
+%type <s> expresionPrimaria
+
+%left '*' '/'
+%left '+' '-'  AND OR
+%left IGUALDAD DESIGUALDAD
+%left ','
+%right INCREMENTO DECREMENTO SIZEOF '&' '!'
+%right ':' '?'  
+%right RESTADIRECTA SUMADIRECTA '=' 
 %nonassoc '{' '}' '[' ']' '(' ')'
-
 
 %% /* A continuacion las reglas gramaticales y las acciones */
 
-input: programa 
+input: {printf("Analisis completo");}
+      |input line {printf("Analisis completo");}
 ;
+line: '\n'
+      | programa '\n'
+;
+
 programa: global
           |programa global
 ;
-global: declaracion
-        |definicionFuncion
+global: declaracion   {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
+        |definicionFuncion  {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
 ;
-declaracion:  modalidadOP TIPODATO listaIdentificadores  ';' 
-              modalidadOP declarancionDeStruct';'
-              modalidadOP declaracionFuncion';'
+declaracion:  variable';'  {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
+              |declaracionFuncion';'              {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
 ;
-declaracionParametrosStruct: modalidadOP tipoDeDato ID';'
-                            |modalidadOP tipoDeDato '*'ID';'
-                            |modalidadOP tipoDeDato ID'['expresion']'';'
-                            |modalidadOP tipoDeDato ID'['']'';'
+declaracionFuncion: TIPODATO ID '('listaDeParametros')'                     {if(controlId){punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));punteroFunc=agregarFuncion(punteroFunc,$<s.cadena>2,$<s.cadena>1);funcionActual=ultimoDeLaLista(punteroFunc);funcionActual->parametros=asignar(parametros);parametros=NULL;}else{yyerror("Ya existe la variable");flag_error==1;}}
+                    |VOID ID '('listaDeParametros')'                        {if(controlId){punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));punteroFunc=agregarFuncion(punteroFunc,$<s.cadena>2,$<s.cadena>1);funcionActual=ultimoDeLaLista(punteroFunc);funcionActual->parametros=asignar(parametros);parametros=NULL;}else{yyerror("Ya existe la variable");flag_error==1;}}
 ;
-declaracionFuncion: type ID '('listaDeParametrosOP')'
-;
-definicionFuncion: type ID '('listaDeParametros')' sentenciaCompuesta
-;
-listaDeParametros: parametro
-                  |listaDeParametros ',' parametro
-;
-parametro: TIPODATO ID
-          |TIPODATO'*' ID
-          |TIPODATO'['']'ID
-;
-modalidadOP: 
-            |MODALIDAD
-;
-tipoDeDato: TIPODATO
-            |STRUCT ID
-;
-type: tipoDeDato
-      |VOID
-;
-listaDeDeclaracionesStructOP: 
-                              |listaDeDeclaracionesStruct
-;
-listaDeDeclaracionesStruct: declaracionParametrosStruct
-                            |listaDeDeclaracionesStruct declaracionParametrosStruct
-;
+definicionFuncion: TIPODATO ID '('listaDeParametros')' sentenciaCompuesta  {if(controlId){punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));punteroFunc=agregarFuncion(punteroFunc,$<s.cadena>2,$<s.cadena>1);funcionActual=ultimoDeLaLista(punteroFunc);}else{yyerror("Ya existe la variable");flag_error==1;}}
+                  |VOID ID '('listaDeParametros')' sentenciaCompuesta  {if(controlId){punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));punteroFunc=agregarFuncion(punteroFunc,$<s.cadena>2,$<s.cadena>1);funcionActual=ultimoDeLaLista(punteroFunc);}else{yyerror("Ya existe la variable");flag_error==1;}}
 
-listaIdentificadores: identificadorA
-                    | listaIdentificadores ',' identificadorA
 ;
-identificadorA: declaracionNormal
-                |declaracionArray
-                |declaracionPuntero
+listaDeParametros: 
+                  |parametro 
+                  |listaDeParametros ',' parametro 
 ;
-declaracionNormal: ID
-                   |ID '=' expresion
+parametro: TIPODATO ID  {parametros=agregarVariable(parametros,$<s.cadena>2,$<s.cadena>1);}
+variable: TIPODATO ID {if(controlId){punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));punteroVariables=agregarVariable(punteroVariables,$<s.cadena>2,$<s.cadena>1);}else{yyerror("Ya existe la variable");flag_error==1;}}
 ;
-declaracionPuntero: '*'ID asignarPunteroOP
+sentenciaCompuesta: '{'listaCompuesta'}' 
 ;
-asignarPunteroOP: 
-                  |asignarPuntero
+listaCompuesta:  
+                |listaCompuesta '\n'
+                |listaCompuesta sentencia '\n'
 ;
-asignarPuntero: '=' expresion
-                |'=' ID
-                |'=' '&'ID
-;            
-declaracionArray: ID'['expresion']' asignarArrayOp
-                  |ID'['']' asignarArray
-;
-asignarArrayOp: 
-                  |asignarArray
-;
-asignarArray: '=' '{'listaDeExpresiones'}'
-;
-
-declarancionDeStruct: STRUCT ID
-                      STRUCT ID '{'listaDeDeclaracionesStructOP'}'
-                      STRUCT ID '{'listaDeDeclaracionesStructOP'}'ID
-                      STRUCT '{'listaDeDeclaracionesStructOP'}'ID
-;
-listaDeParametrosOP: 
-                      |listaDeParametros
-;
-sentenciaCompuesta: '{' '}' 
-                    |'{'listaCompuesta'}'
-;
-listaCompuesta: elementoDeSentencia
-                |listaCompuesta elementoDeSentencia
-;
-elementoDeSentencia: listaDeFunciones
-                  |listaDeDeclaraciones
-                  |listaDeSentencias
-;
-listaDeFunciones: definicionFuncion
-                  |listaDeFunciones definicionFuncion
-;
-
-listaDeDeclaraciones:  declaracion
-                    | listaDeDeclaraciones declaracion 
-;             
-listaDeSentencias:  sentencia
-                    |listaDeSentencias sentencia
-;
-sentencia: sentenciaCompuesta 
-          |sentenciaExpresion 
-          |sentenciaSeleccion 
-          |sentenciaIteracion 
-          |sentenciaSalto 
+sentencia: sentenciaCompuesta {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
+          |sentenciaExpresion {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
+          |sentenciaSeleccion {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
+          |sentenciaIteracion {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
+          |sentenciaSalto     {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
+          |declaracion       {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
 ;
 sentenciaExpresion: ';'       
-                    |expresion';'
+                    |expresion';' {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
 ;
-sentenciaSeleccion: IF'('expresion')' sentencia
+sentenciaSeleccion:  IF'('expresion')' sentencia  {printf("fjanfa");}
                     |IF'('expresion')' sentencia ELSE sentencia
                     |SWITCH'('expresion')' sentencia
 ;
 sentenciaIteracion: WHILE '(' expresion ')' sentencia
                     |DO sentencia WHILE'(' expresion ')' ';'
-                    |FOR '(' expresionOP ';' expresionOP ';' expresionOP ')' sentencia 
+                    |FOR '(' expresionOP ';' expresionOP ';' expresionOP ')' sentenciaCompuesta 
 ;
-sentenciaSalto: CONTINUE';'
+sentenciaSalto: CONTINUE';'       
                 |BREAK ';'
                 |RETURN expresion ';'
-;
-listaDeExpresiones: expresion
-                    |listaDeExpresiones ',' expresion
 ;
 expresionOP: 
               |expresion
 ;
-expresion: expresionAsignacion {$<s.tipo>$ = $<s.tipo>1;}
+expresion: expresionAsignacion 
 ;
 
-expresionAsignacion: expresionCondicional {$<s.tipo>$ = $<s.tipo>1;}
-                     |expresionUnaria operacionAsignacion expresionAsignacion  {if(1){$<s.tipo>$ = $<s.tipo>1;} } //hacer lvalue y control de tipos 
+expresionAsignacion: expresionCondicional 
+                     |expresionUnaria operacionAsignacion expresionAsignacion   { if(lvalueError($<s.cadena>1)){
+                                                                                  printf("Error de lValue");
+                                                                                  }else{
+                                                                                  if(controlOperacion(punteroId,$<s.cadena>1,$<s.cadena>3,$<s.tipo>1,$<s.tipo>3)){
+                                                                                    $<s.tipo>$ = $<s.tipo>1; 
+                                                                                    strcpy($<s.cadena>$,$<s.cadena>1);
+                                                                                  }else{
+                                                                                    printf("Error de tipos");
+                                                                                    flag_error=1;YYERROR;}}}
 ;
-operacionAsignacion: '='|SUMADIRECTA|RESTADIRECTA
+operacionAsignacion: '='
+                    |SUMADIRECTA
+                    |RESTADIRECTA
 ;
-expresionCondicional: expresionOr {$<s.tipo>$ = $<s.tipo>1;}
-                      |expresionOr '?' expresion ':' expresion  {$<s.tipo>$ = 1;}
+expresionCondicional: expresionOr
+                      |expresionOr '?' expresion ':' expresion 
 ;
-expresionOr: expresionAnd {$<s.tipo>$ = $<s.tipo>1;}
-            |expresionOr OR expresionAnd  {$<s.tipo>$ = 1;}
+expresionOr: expresionAnd 
+            |expresionOr OR expresionAnd   {if(controlOperacion(punteroId,$<s.cadena>1,$<s.cadena>3,$<s.tipo>1,$<s.tipo>3)){
+                                                                          $<s.tipo>$ = $<s.tipo>1;
+                                                                          strcpy($<s.cadena>$,$<s.cadena>1);
+                                                                          }else{
+                                                                          flag_error=1;YYERROR;}}
 ;
-expresionAnd: expresionIgualdad  {$<s.tipo>$ = $<s.tipo>1;}
-             |expresionAnd AND expresionIgualdad  {$<s.tipo>$ = 1;}
+expresionAnd: expresionIgualdad 
+             |expresionAnd AND expresionIgualdad    {if(controlOperacion(punteroId,$<s.cadena>1,$<s.cadena>3,$<s.tipo>1,$<s.tipo>3)){
+                                                                          $<s.tipo>$ = $<s.tipo>1;
+                                                                          strcpy($<s.cadena>$,$<s.cadena>1);
+                                                                          }else{
+                                                                          flag_error=1;YYERROR;}}
 ;
-expresionIgualdad: expresionRelacional {$<s.tipo>$ = $<s.tipo>1;}
-                  | expresionIgualdad operadorComparacion expresionRelacional  {$<s.tipo>$ = 1;}
+expresionIgualdad: expresionRelacional
+                  | expresionIgualdad operadorComparacion expresionRelacional  {if(controlOperacion(punteroId,$<s.cadena>1,$<s.cadena>3,$<s.tipo>1,$<s.tipo>3)){
+                                                                          $<s.tipo>$ = $<s.tipo>1;
+                                                                          strcpy($<s.cadena>$,$<s.cadena>1);
+                                                                          $<s.tipo>$=$<s.tipo>1;
+                                                                          }else{
+                                                                          flag_error=1;YYERROR;}}
 ;
 operadorComparacion: IGUALDAD DESIGUALDAD
 ;
-expresionRelacional: expresionAditiva {$<s.tipo>$ = $<s.tipo>1;}
-                     |expresionRelacional operadorRelacional expresionAditiva  {$<s.tipo>$ = 1;}
+expresionRelacional: expresionAditiva 
+                     |expresionRelacional operadorRelacional expresionAditiva    {if(controlOperacion(punteroId,$<s.cadena>1,$<s.cadena>3,$<s.tipo>1,$<s.tipo>3)){
+                                                                          $<s.tipo>$ = $<s.tipo>1;
+                                                                          strcpy($<s.cadena>$,$<s.cadena>1);
+                                                                          $<s.tipo>$=$<s.tipo>1;
+                                                                          }else{
+                                                                          flag_error=1;YYERROR;}}
 ;
 operadorRelacional: '>' | '<' | MENORIGUAL | MAYORIGUAL
 ;
-expresionAditiva: expresionMultiplicativa  {$<s.tipo>$ = $<s.tipo>1;}
-                  |expresionAditiva '+' expresionMultiplicativa  {$<s.tipo>$ = $<s.tipo>1;}
-                  |expresionAditiva '-' expresionMultiplicativa  {$<s.tipo>$ = $<s.tipo>1;}
+expresionAditiva: expresionMultiplicativa  
+                  |expresionAditiva '+' expresionMultiplicativa   {if(controlOperacion(punteroId,$<s.cadena>1,$<s.cadena>3,$<s.tipo>1,$<s.tipo>3)){
+                                                                          $<s.tipo>$ = $<s.tipo>1;
+                                                                          strcpy($<s.cadena>$,$<s.cadena>1);
+                                                                          $<s.tipo>$=$<s.tipo>1;
+                                                                          }else{
+                                                                          flag_error=1;YYERROR;}}
+                  |expresionAditiva '-' expresionMultiplicativa  {if(controlOperacion(punteroId,$<s.cadena>1,$<s.cadena>3,$<s.tipo>1,$<s.tipo>3)){
+                                                                          $<s.tipo>$ = $<s.tipo>1;
+                                                                          strcpy($<s.cadena>$,$<s.cadena>1);
+                                                                          $<s.tipo>$=$<s.tipo>1;
+                                                                          }else{
+                                                                          flag_error=1;YYERROR;}}
 ;
-expresionMultiplicativa:  expresionUnaria {$<s.tipo>$ = $<s.tipo>1;}
-                          | expresionMultiplicativa '*' expresionUnaria
-                          | expresionMultiplicativa '/' expresionUnaria
+expresionMultiplicativa:  expresionUnaria 
+                          | expresionMultiplicativa '*' expresionUnaria {if(controlOperacion(punteroId,$<s.cadena>1,$<s.cadena>3,$<s.tipo>1,$<s.tipo>3)){
+                                                                          $<s.tipo>$ = $<s.tipo>1;
+                                                                          strcpy($<s.cadena>$,$<s.cadena>1);
+                                                                          $<s.tipo>$=$<s.tipo>1;
+                                                                          }else{
+                                                                          flag_error=1;YYERROR;}}
+                          | expresionMultiplicativa '/' expresionUnaria  {if(controlOperacion(punteroId,$<s.cadena>1,$<s.cadena>3,$<s.tipo>1,$<s.tipo>3)){
+                                                                          $<s.tipo>$ = $<s.tipo>1;
+                                                                          strcpy($<s.cadena>$,$<s.cadena>1);
+                                                                          $<s.tipo>$=$<s.tipo>1;
+                                                                          }else{
+                                                                          flag_error=1;YYERROR;}}
 ;
-expresionUnaria: expresionPostfijo  {$<s.tipo>$ = $<s.tipo>1;}
-                 | INCREMENTO expresionUnaria  {$<s.tipo>$ = $<s.tipo>1;}
-                 | DECREMENTO expresionUnaria {$<s.tipo>$ = $<s.tipo>1;}
-                 | operadorUnario expresionUnaria {$<s.tipo>$ = $<s.tipo>1;}
-                 | '-' expresionUnaria %prec NEG {$<s.tipo>$ = $<s.tipo>1;}
-                 | '+' expresionUnaria %prec POS {$<s.tipo>$ = $<s.tipo>1;}
-                 | '*' expresionUnaria %prec PUNT {$<s.tipo>$ = $<s.tipo>1;}
+expresionUnaria: expresionPostfijo 
+                 | expresionUnaria INCREMENTO {  if(!lvalueError($<s.cadena>1)){
+                                                  $<s.tipo>$ = $<s.tipo>1;
+                                                  strcpy($<s.cadena>$,$<s.cadena>1);
+                                                  }else{
+                                                    printf("Error de lValue");
+                                                    flag_error=1;YYERROR;}}
+                 | expresionUnaria DECREMENTO {  if(!lvalueError($<s.cadena>1)){
+                                                  $<s.tipo>$ = $<s.tipo>1;
+                                                  strcpy($<s.cadena>$,$<s.cadena>1);
+                                                  }else{
+                                                    printf("Error de lValue");
+                                                    flag_error=1;YYERROR;}}                 | operadorUnario expresionUnaria 
+                 | '-' expresionUnaria %prec NEG 
+                 | '+' expresionUnaria %prec POS 
+                 | '*' expresionUnaria %prec PUNT 
 ;
 operadorUnario: '&'|'!'
 ;
-expresionPostfijo: expresionPrimaria 
-                  |expresionPostfijo'['expresion']'
-                  |expresionPostfijo'('listaDeArgumentos')'
+expresionPostfijo: expresionPrimaria                 
+                  |expresionPostfijo'['expresion']'   
+                  |expresionPostfijo'('listaDeArgumentos')' 
 ;
 listaDeArgumentos: expresionAsignacion
                    |listaDeArgumentos ',' expresionAsignacion
 ;
-expresionPrimaria: NUM {printf("%f",$<s.valor>1);}
-                   |ID {printf("%s",$<s.cadena>1);}
-                   |LCADENA  {printf("%s",$<s.cadena>1);}
+expresionPrimaria: NUM        
+                   |ID        
+                   |LCADENA   
 
 
 
@@ -233,4 +237,7 @@ int main ()
   yyout = fopen("salida.txt","w");
   yyin = fopen("entrada.txt","r+");
   yyparse ();
+  mostrarListaVariables(punteroVariables);
+  printf("----------------------\n");
+  mostrarListaFuncion(punteroFunc);
 }

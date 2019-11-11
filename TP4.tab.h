@@ -88,20 +88,18 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 13 "TP4.y"
+#line 22 "TP4.y"
 
-  struct{
+    struct{
     char cadena[50];
     double valor;
     int tipo;
-  }s;
-  char caracter;
-  char* cadena;
+  }s; 
 
 
 
 /* Line 1676 of yacc.c  */
-#line 105 "TP4.tab.h"
+#line 103 "TP4.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
