@@ -1,26 +1,26 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
 struct nodoId{
 	char* id;
 	int tipo;
-	struct nodoId next;
+	struct nodoId *next;
 };
 
 struct nodoVariable{
 	char* id;
-	char* tipo;		
-	struct nodoVariable next;
+	char* tipo;
+	struct nodoVariable *next;
 };
 struct nodoFuncion{
 	char* id;
 	char* tipo;
-	struct nodoVariable parametros;
-	struct nodoFuncion next;
+	struct nodoVariable *parametros;
+	struct nodoFuncion *next;
 };
-struct nodoVariable punteroVariable = NULL;
-struct nodoFuncion punteroFun = NULL;
-struct nodoId punteroId = NULL;
 
-
-struct nodoVariable *agregarVariable(struct nodoVariable puntero, char *nuevoId,char *nuevoTipo){
+struct nodoVariable *agregarVariable(struct nodoVariable *puntero, char *nuevoId,char *nuevoTipo){
 	struct nodoVariable *nuevo;
 	nuevo = (struct nodoVariable*)malloc(sizeof(struct nodoVariable));
 	nuevo->id=nuevoId;
@@ -37,7 +37,7 @@ struct nodoVariable *agregarVariable(struct nodoVariable puntero, char *nuevoId,
     }
     return puntero;
 }
-struct nodoFuncion *agregarFuncion(struct nodoFuncion puntero, char *nuevoId,char *nuevoTipo){
+struct nodoFuncion *agregarFuncion(struct nodoFuncion *puntero, char *nuevoId,char *nuevoTipo){
 	struct nodoFuncion *nuevo;
 	nuevo = (struct nodoFuncion*)malloc(sizeof(struct nodoFuncion));
 	nuevo->id=nuevoId;
@@ -55,7 +55,7 @@ struct nodoFuncion *agregarFuncion(struct nodoFuncion puntero, char *nuevoId,cha
     }
     return puntero;
 }
-struct nodoId *agregarId(struct nodoVariable puntero, char *nuevoId, int tipo){
+struct nodoId *agregarId(struct nodoId *puntero, char *nuevoId, int tipo){
 	struct nodoId *nuevo;
 	nuevo = (struct nodoId*)malloc(sizeof(struct nodoId));
 	nuevo->id=nuevoId;
@@ -84,7 +84,7 @@ struct nodoId *buscarId(struct nodoId *puntero, char *idMatch){
                 encontrado=1;
             }else{
                 aux=aux->next;
-            }   
+            }
         }
     }
     return punteroEncontrado;
@@ -95,7 +95,7 @@ void mostrarListaVariables(struct nodoVariable *puntero){
     struct nodoVariable *aux=puntero;
     if(puntero!=NULL){
         while(aux!=NULL){
-            printf("%s\s%d\n",aux->id,aux->tipo);
+            printf("%s %s\n",aux->id,aux->tipo);
             aux=aux->next;
         }
     }
@@ -104,9 +104,9 @@ void mostrarListaFuncion(struct nodoFuncion *puntero){
     struct nodoFuncion *aux=puntero;
     if(puntero!=NULL){
         while(aux!=NULL){
-            printf("%s\s%d\n",aux->id,aux->tipo);
+            printf("%s %s\n",aux->id,aux->tipo);
             printf("Parametros de %s:\n",aux->id);
-            mostrarListaId(aux.parametros);
+            mostrarListaVariables((*aux).parametros);
             aux=aux->next;
         }
     }
