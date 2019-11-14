@@ -71,10 +71,10 @@ struct nodoFuncion* ultimoDeLaLista(struct nodoFuncion* funcion){
     struct nodoFuncion *aux=funcion;
 	if(funcion!=NULL){
         while(aux->next!=NULL){
-         	aux=aux->next; 
+         	aux=aux->next;
         }
     }
-    return aux; 
+    return aux;
 }
 struct nodoVariable* asignar(struct nodoVariable* puntero){
 	struct nodoVariable* aux ;
@@ -111,9 +111,11 @@ struct nodoId *buscarId(struct nodoId *puntero, char *idMatch){
                 encontrado=1;
             }else{
                 aux=aux->next;
+
             }
         }
     }
+    printf("No Lo reconoci bien: ");
     return punteroEncontrado;
 }
 
@@ -142,7 +144,7 @@ void mostrarListaFuncion(struct nodoFuncion *puntero){
     }
 }
 
-int controlId(struct nodoId *puntero, char *id){	
+int controlId(struct nodoId *puntero, char *id){
 	return buscarId(puntero,id)==NULL;
 }
 
@@ -159,9 +161,9 @@ int tipoId(struct nodoId *punteroId,char* cadena,int tipo){
 		struct nodoId *a = buscarId(punteroId,cadena);{
 			if(a==NULL){
 				return -1;
-			}else{				
+			}else{
 				return a->tipo;
-			}			
+			}
 		}
 	}else{
 		return tipo;
@@ -174,7 +176,7 @@ int controlDeTiposOperacion(int tipo1,int tipo2){
 	}
 	if((tipo1==4 || tipo2 == 4)){
 		return 0;
-	} 
+	}
 }
 int controlOperacion(struct nodoId *punteroId,char *cadena1,char *cadena2,int tipo1, int tipo2){
 	tipo1 = tipoId(punteroId,cadena1,tipo1);
@@ -186,8 +188,8 @@ int controlOperacion(struct nodoId *punteroId,char *cadena1,char *cadena2,int ti
 			printf("Error de tipos");
 			return 0;
 	}else{
-		return 1;	
-	}	
+		return 1;
+	}
 }
 int tipoDeDato(char* tipo){
 	if(!strcmp(tipo,"int")){
@@ -197,10 +199,10 @@ int tipoDeDato(char* tipo){
 			return 2;
 		}else{
 			if(!strcmp(tipo,"char")){
-				return 3;	
+				return 3;
 			}else{
 				 if(!strcmp(tipo,"char*")){
-					return 4;	
+					return 4;
 				}else{
 					if(!strcmp(tipo,"void")){
 						return 0;

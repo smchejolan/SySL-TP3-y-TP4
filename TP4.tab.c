@@ -511,13 +511,13 @@ static const yytype_uint8 yyrline[] =
 {
        0,    49,    49,    50,    52,    53,    56,    57,    59,    60,
       62,    63,    65,    66,    68,    69,    72,    73,    74,    76,
-      77,    79,    81,    82,    83,    85,    86,    87,    88,    89,
-      90,    92,    93,    95,    96,    97,    99,   100,   101,   103,
-     104,   105,   107,   108,   110,   113,   114,   124,   125,   126,
-     128,   129,   131,   132,   138,   139,   145,   146,   153,   155,
-     156,   163,   163,   163,   163,   165,   166,   172,   179,   180,
-     186,   193,   194,   200,   205,   206,   207,   208,   210,   210,
-     212,   213,   214,   216,   217,   219,   220,   221
+      79,    82,    84,    85,    86,    88,    89,    90,    91,    92,
+      93,    95,    96,    98,    99,   100,   102,   103,   104,   106,
+     107,   108,   110,   111,   113,   116,   117,   127,   128,   129,
+     131,   132,   134,   135,   141,   142,   148,   149,   156,   158,
+     159,   166,   166,   166,   166,   168,   169,   175,   182,   183,
+     189,   196,   197,   203,   208,   209,   210,   211,   213,   213,
+     215,   216,   217,   219,   220,   222,   223,   224
 };
 #endif
 
@@ -1589,28 +1589,28 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 65 "TP4.y"
-    {if(controlId){punteroId=agregarId(punteroId,(yyvsp[(2) - (5)].s.cadena),tipoDeDato((yyvsp[(1) - (5)].s.cadena)));punteroFunc=agregarFuncion(punteroFunc,(yyvsp[(2) - (5)].s.cadena),(yyvsp[(1) - (5)].s.cadena));funcionActual=ultimoDeLaLista(punteroFunc);funcionActual->parametros=asignar(parametros);parametros=NULL;}else{yyerror("Ya existe la variable");flag_error==1;};}
+    {if(controlId(punteroId,(yyvsp[(1) - (5)].s.cadena))){printf("Lo reconoci bien: ");punteroId=agregarId(punteroId,(yyvsp[(2) - (5)].s.cadena),tipoDeDato((yyvsp[(1) - (5)].s.cadena)));punteroFunc=agregarFuncion(punteroFunc,(yyvsp[(2) - (5)].s.cadena),(yyvsp[(1) - (5)].s.cadena));funcionActual=ultimoDeLaLista(punteroFunc);funcionActual->parametros=asignar(parametros);parametros=NULL;}else{yyerror("Ya existe la variable");flag_error==1;};}
     break;
 
   case 13:
 
 /* Line 1455 of yacc.c  */
 #line 66 "TP4.y"
-    {if(controlId){punteroId=agregarId(punteroId,(yyvsp[(2) - (5)].s.cadena),tipoDeDato((yyvsp[(1) - (5)].s.cadena)));punteroFunc=agregarFuncion(punteroFunc,(yyvsp[(2) - (5)].s.cadena),(yyvsp[(1) - (5)].s.cadena));funcionActual=ultimoDeLaLista(punteroFunc);funcionActual->parametros=asignar(parametros);parametros=NULL;}else{yyerror("Ya existe la variable");flag_error==1;};}
+    {if(controlId(punteroId,(yyvsp[(1) - (5)].s.cadena))){punteroId=agregarId(punteroId,(yyvsp[(2) - (5)].s.cadena),tipoDeDato((yyvsp[(1) - (5)].s.cadena)));punteroFunc=agregarFuncion(punteroFunc,(yyvsp[(2) - (5)].s.cadena),(yyvsp[(1) - (5)].s.cadena));funcionActual=ultimoDeLaLista(punteroFunc);funcionActual->parametros=asignar(parametros);parametros=NULL;}else{yyerror("Ya existe la variable");flag_error==1;};}
     break;
 
   case 14:
 
 /* Line 1455 of yacc.c  */
 #line 68 "TP4.y"
-    {if(controlId){punteroId=agregarId(punteroId,(yyvsp[(2) - (6)].s.cadena),tipoDeDato((yyvsp[(1) - (6)].s.cadena)));punteroFunc=agregarFuncion(punteroFunc,(yyvsp[(2) - (6)].s.cadena),(yyvsp[(1) - (6)].s.cadena));funcionActual=ultimoDeLaLista(punteroFunc);}else{yyerror("Ya existe la variable");flag_error==1;};}
+    {if(controlId(punteroId,(yyvsp[(1) - (6)].s.cadena))){punteroId=agregarId(punteroId,(yyvsp[(2) - (6)].s.cadena),tipoDeDato((yyvsp[(1) - (6)].s.cadena)));punteroFunc=agregarFuncion(punteroFunc,(yyvsp[(2) - (6)].s.cadena),(yyvsp[(1) - (6)].s.cadena));funcionActual=ultimoDeLaLista(punteroFunc);}else{yyerror("Ya existe la variable");flag_error==1;};}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
 #line 69 "TP4.y"
-    {if(controlId){punteroId=agregarId(punteroId,(yyvsp[(2) - (6)].s.cadena),tipoDeDato((yyvsp[(1) - (6)].s.cadena)));punteroFunc=agregarFuncion(punteroFunc,(yyvsp[(2) - (6)].s.cadena),(yyvsp[(1) - (6)].s.cadena));funcionActual=ultimoDeLaLista(punteroFunc);}else{yyerror("Ya existe la variable");flag_error==1;};}
+    {if(controlId(punteroId,(yyvsp[(1) - (6)].s.cadena))){punteroId=agregarId(punteroId,(yyvsp[(2) - (6)].s.cadena),tipoDeDato((yyvsp[(1) - (6)].s.cadena)));punteroFunc=agregarFuncion(punteroFunc,(yyvsp[(2) - (6)].s.cadena),(yyvsp[(1) - (6)].s.cadena));funcionActual=ultimoDeLaLista(punteroFunc);}else{yyerror("Ya existe la variable");flag_error==1;};}
     break;
 
   case 19:
@@ -1623,70 +1623,70 @@ yyreduce:
   case 20:
 
 /* Line 1455 of yacc.c  */
-#line 77 "TP4.y"
+#line 79 "TP4.y"
     {if(controlId){punteroId=agregarId(punteroId,(yyvsp[(2) - (2)].s.cadena),tipoDeDato((yyvsp[(1) - (2)].s.cadena)));punteroVariables=agregarVariable(punteroVariables,(yyvsp[(2) - (2)].s.cadena),(yyvsp[(1) - (2)].s.cadena));}else{yyerror("Ya existe la variable");flag_error==1;};}
     break;
 
   case 25:
 
 /* Line 1455 of yacc.c  */
-#line 85 "TP4.y"
+#line 88 "TP4.y"
     {(yyval.s.tipo) = (yyvsp[(1) - (1)].s.tipo); strcpy((yyval.s.cadena),(yyvsp[(1) - (1)].s.cadena));(yyval.s.tipo)=(yyvsp[(1) - (1)].s.tipo);}
     break;
 
   case 26:
 
 /* Line 1455 of yacc.c  */
-#line 86 "TP4.y"
+#line 89 "TP4.y"
     {(yyval.s.tipo) = (yyvsp[(1) - (1)].s.tipo); strcpy((yyval.s.cadena),(yyvsp[(1) - (1)].s.cadena));(yyval.s.tipo)=(yyvsp[(1) - (1)].s.tipo);}
     break;
 
   case 27:
 
 /* Line 1455 of yacc.c  */
-#line 87 "TP4.y"
+#line 90 "TP4.y"
     {(yyval.s.tipo) = (yyvsp[(1) - (1)].s.tipo); strcpy((yyval.s.cadena),(yyvsp[(1) - (1)].s.cadena));(yyval.s.tipo)=(yyvsp[(1) - (1)].s.tipo);}
     break;
 
   case 28:
 
 /* Line 1455 of yacc.c  */
-#line 88 "TP4.y"
+#line 91 "TP4.y"
     {(yyval.s.tipo) = (yyvsp[(1) - (1)].s.tipo); strcpy((yyval.s.cadena),(yyvsp[(1) - (1)].s.cadena));(yyval.s.tipo)=(yyvsp[(1) - (1)].s.tipo);}
     break;
 
   case 29:
 
 /* Line 1455 of yacc.c  */
-#line 89 "TP4.y"
+#line 92 "TP4.y"
     {(yyval.s.tipo) = (yyvsp[(1) - (1)].s.tipo); strcpy((yyval.s.cadena),(yyvsp[(1) - (1)].s.cadena));(yyval.s.tipo)=(yyvsp[(1) - (1)].s.tipo);}
     break;
 
   case 30:
 
 /* Line 1455 of yacc.c  */
-#line 90 "TP4.y"
+#line 93 "TP4.y"
     {(yyval.s.tipo) = (yyvsp[(1) - (1)].s.tipo); strcpy((yyval.s.cadena),(yyvsp[(1) - (1)].s.cadena));(yyval.s.tipo)=(yyvsp[(1) - (1)].s.tipo);}
     break;
 
   case 32:
 
 /* Line 1455 of yacc.c  */
-#line 93 "TP4.y"
+#line 96 "TP4.y"
     {(yyval.s.tipo) = (yyvsp[(1) - (2)].s.tipo); strcpy((yyval.s.cadena),(yyvsp[(1) - (2)].s.cadena));(yyval.s.tipo)=(yyvsp[(1) - (2)].s.tipo);}
     break;
 
   case 33:
 
 /* Line 1455 of yacc.c  */
-#line 95 "TP4.y"
+#line 98 "TP4.y"
     {printf("fjanfa");;}
     break;
 
   case 46:
 
 /* Line 1455 of yacc.c  */
-#line 114 "TP4.y"
+#line 117 "TP4.y"
     { if(lvalueError((yyvsp[(1) - (3)].s.cadena))){
                                                                                   printf("Error de lValue");
                                                                                   }else{
@@ -1701,7 +1701,7 @@ yyreduce:
   case 53:
 
 /* Line 1455 of yacc.c  */
-#line 132 "TP4.y"
+#line 135 "TP4.y"
     {if(controlOperacion(punteroId,(yyvsp[(1) - (3)].s.cadena),(yyvsp[(3) - (3)].s.cadena),(yyvsp[(1) - (3)].s.tipo),(yyvsp[(3) - (3)].s.tipo))){
                                                                           (yyval.s.tipo) = (yyvsp[(1) - (3)].s.tipo);
                                                                           strcpy((yyval.s.cadena),(yyvsp[(1) - (3)].s.cadena));
@@ -1712,7 +1712,7 @@ yyreduce:
   case 55:
 
 /* Line 1455 of yacc.c  */
-#line 139 "TP4.y"
+#line 142 "TP4.y"
     {if(controlOperacion(punteroId,(yyvsp[(1) - (3)].s.cadena),(yyvsp[(3) - (3)].s.cadena),(yyvsp[(1) - (3)].s.tipo),(yyvsp[(3) - (3)].s.tipo))){
                                                                           (yyval.s.tipo) = (yyvsp[(1) - (3)].s.tipo);
                                                                           strcpy((yyval.s.cadena),(yyvsp[(1) - (3)].s.cadena));
@@ -1723,7 +1723,7 @@ yyreduce:
   case 57:
 
 /* Line 1455 of yacc.c  */
-#line 146 "TP4.y"
+#line 149 "TP4.y"
     {if(controlOperacion(punteroId,(yyvsp[(1) - (3)].s.cadena),(yyvsp[(3) - (3)].s.cadena),(yyvsp[(1) - (3)].s.tipo),(yyvsp[(3) - (3)].s.tipo))){
                                                                           (yyval.s.tipo) = (yyvsp[(1) - (3)].s.tipo);
                                                                           strcpy((yyval.s.cadena),(yyvsp[(1) - (3)].s.cadena));
@@ -1735,7 +1735,7 @@ yyreduce:
   case 60:
 
 /* Line 1455 of yacc.c  */
-#line 156 "TP4.y"
+#line 159 "TP4.y"
     {if(controlOperacion(punteroId,(yyvsp[(1) - (3)].s.cadena),(yyvsp[(3) - (3)].s.cadena),(yyvsp[(1) - (3)].s.tipo),(yyvsp[(3) - (3)].s.tipo))){
                                                                           (yyval.s.tipo) = (yyvsp[(1) - (3)].s.tipo);
                                                                           strcpy((yyval.s.cadena),(yyvsp[(1) - (3)].s.cadena));
@@ -1747,7 +1747,7 @@ yyreduce:
   case 66:
 
 /* Line 1455 of yacc.c  */
-#line 166 "TP4.y"
+#line 169 "TP4.y"
     {if(controlOperacion(punteroId,(yyvsp[(1) - (3)].s.cadena),(yyvsp[(3) - (3)].s.cadena),(yyvsp[(1) - (3)].s.tipo),(yyvsp[(3) - (3)].s.tipo))){
                                                                           (yyval.s.tipo) = (yyvsp[(1) - (3)].s.tipo);
                                                                           strcpy((yyval.s.cadena),(yyvsp[(1) - (3)].s.cadena));
@@ -1759,7 +1759,7 @@ yyreduce:
   case 67:
 
 /* Line 1455 of yacc.c  */
-#line 172 "TP4.y"
+#line 175 "TP4.y"
     {if(controlOperacion(punteroId,(yyvsp[(1) - (3)].s.cadena),(yyvsp[(3) - (3)].s.cadena),(yyvsp[(1) - (3)].s.tipo),(yyvsp[(3) - (3)].s.tipo))){
                                                                           (yyval.s.tipo) = (yyvsp[(1) - (3)].s.tipo);
                                                                           strcpy((yyval.s.cadena),(yyvsp[(1) - (3)].s.cadena));
@@ -1771,7 +1771,7 @@ yyreduce:
   case 69:
 
 /* Line 1455 of yacc.c  */
-#line 180 "TP4.y"
+#line 183 "TP4.y"
     {if(controlOperacion(punteroId,(yyvsp[(1) - (3)].s.cadena),(yyvsp[(3) - (3)].s.cadena),(yyvsp[(1) - (3)].s.tipo),(yyvsp[(3) - (3)].s.tipo))){
                                                                           (yyval.s.tipo) = (yyvsp[(1) - (3)].s.tipo);
                                                                           strcpy((yyval.s.cadena),(yyvsp[(1) - (3)].s.cadena));
@@ -1783,7 +1783,7 @@ yyreduce:
   case 70:
 
 /* Line 1455 of yacc.c  */
-#line 186 "TP4.y"
+#line 189 "TP4.y"
     {if(controlOperacion(punteroId,(yyvsp[(1) - (3)].s.cadena),(yyvsp[(3) - (3)].s.cadena),(yyvsp[(1) - (3)].s.tipo),(yyvsp[(3) - (3)].s.tipo))){
                                                                           (yyval.s.tipo) = (yyvsp[(1) - (3)].s.tipo);
                                                                           strcpy((yyval.s.cadena),(yyvsp[(1) - (3)].s.cadena));
@@ -1795,7 +1795,7 @@ yyreduce:
   case 72:
 
 /* Line 1455 of yacc.c  */
-#line 194 "TP4.y"
+#line 197 "TP4.y"
     {  if(!lvalueError((yyvsp[(1) - (2)].s.cadena))){
                                                   (yyval.s.tipo) = (yyvsp[(1) - (2)].s.tipo);
                                                   strcpy((yyval.s.cadena),(yyvsp[(1) - (2)].s.cadena));
@@ -1807,7 +1807,7 @@ yyreduce:
   case 73:
 
 /* Line 1455 of yacc.c  */
-#line 200 "TP4.y"
+#line 203 "TP4.y"
     {  if(!lvalueError((yyvsp[(1) - (2)].s.cadena))){
                                                   (yyval.s.tipo) = (yyvsp[(1) - (2)].s.tipo);
                                                   strcpy((yyval.s.cadena),(yyvsp[(1) - (2)].s.cadena));
@@ -2031,7 +2031,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 227 "TP4.y"
+#line 230 "TP4.y"
 
 
 yyerror (s)  

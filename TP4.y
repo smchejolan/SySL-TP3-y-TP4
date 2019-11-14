@@ -5,6 +5,8 @@
 #include <string.h>
 #include "funciones.h"
 
+int lines = 1;
+
 int flag_error=0;
 extern FILE *yyout;
 extern FILE *yyin;
@@ -46,27 +48,28 @@ int funciones=0;
 
 %% /* A continuacion las reglas gramaticales y las acciones */
 
-input: {printf("Analisis completo");}
-      |input line {printf("Analisis completo");}
+input: 
+      |input line 
 ;
-line: '\n'
-      | programa '\n'
+line: '\n' {lines++}
+      | sentencia 
+      | sentencia '\n' {lines ++}
 ;
 
-programa: global
-          |programa global
+// programa: global
+//           |programa global
+// ;
+// global: declaracion   {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
+//         |definicionFuncion  {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
+//;
+declaracion:  variable  ';'  {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
+              |declaracionFuncion ';'              {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
 ;
-global: declaracion   {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
-        |definicionFuncion  {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
+declaracionFuncion: TIPODATO ID '('listaDeParametros')'                {if(controlId(punteroId,$<s.cadena>1)){punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));punteroFunc=agregarFuncion(punteroFunc,$<s.cadena>2,$<s.cadena>1);funcionActual=ultimoDeLaLista(punteroFunc);funcionActual->parametros=asignar(parametros);parametros=NULL;}else{yyerror("Ya existe la variable");flag_error==1;}}
+                    |VOID ID '('listaDeParametros')'                   {if(controlId(punteroId,$<s.cadena>1)){punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));punteroFunc=agregarFuncion(punteroFunc,$<s.cadena>2,$<s.cadena>1);funcionActual=ultimoDeLaLista(punteroFunc);funcionActual->parametros=asignar(parametros);parametros=NULL;}else{yyerror("Ya existe la variable");flag_error==1;}}
 ;
-declaracion:  variable';'  {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
-              |declaracionFuncion';'              {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
-;
-declaracionFuncion: TIPODATO ID '('listaDeParametros')'                     {if(controlId){punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));punteroFunc=agregarFuncion(punteroFunc,$<s.cadena>2,$<s.cadena>1);funcionActual=ultimoDeLaLista(punteroFunc);funcionActual->parametros=asignar(parametros);parametros=NULL;}else{yyerror("Ya existe la variable");flag_error==1;}}
-                    |VOID ID '('listaDeParametros')'                        {if(controlId){punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));punteroFunc=agregarFuncion(punteroFunc,$<s.cadena>2,$<s.cadena>1);funcionActual=ultimoDeLaLista(punteroFunc);funcionActual->parametros=asignar(parametros);parametros=NULL;}else{yyerror("Ya existe la variable");flag_error==1;}}
-;
-definicionFuncion: TIPODATO ID '('listaDeParametros')' sentenciaCompuesta  {if(controlId){punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));punteroFunc=agregarFuncion(punteroFunc,$<s.cadena>2,$<s.cadena>1);funcionActual=ultimoDeLaLista(punteroFunc);}else{yyerror("Ya existe la variable");flag_error==1;}}
-                  |VOID ID '('listaDeParametros')' sentenciaCompuesta  {if(controlId){punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));punteroFunc=agregarFuncion(punteroFunc,$<s.cadena>2,$<s.cadena>1);funcionActual=ultimoDeLaLista(punteroFunc);}else{yyerror("Ya existe la variable");flag_error==1;}}
+definicionFuncion: TIPODATO ID '('listaDeParametros')' sentenciaCompuesta  {if(controlId(punteroId,$<s.cadena>1)){punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));punteroFunc=agregarFuncion(punteroFunc,$<s.cadena>2,$<s.cadena>1);funcionActual=ultimoDeLaLista(punteroFunc);}else{yyerror("Ya existe la variable");flag_error==1;}}
+                  |VOID ID '('listaDeParametros')' sentenciaCompuesta  {if(controlId(punteroId,$<s.cadena>1)){punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));punteroFunc=agregarFuncion(punteroFunc,$<s.cadena>2,$<s.cadena>1);funcionActual=ultimoDeLaLista(punteroFunc);}else{yyerror("Ya existe la variable");flag_error==1;}}
 
 ;
 listaDeParametros: 
@@ -74,13 +77,19 @@ listaDeParametros:
                   |listaDeParametros ',' parametro 
 ;
 parametro: TIPODATO ID  {parametros=agregarVariable(parametros,$<s.cadena>2,$<s.cadena>1);}
+;
+
 variable: TIPODATO ID {if(controlId){punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));punteroVariables=agregarVariable(punteroVariables,$<s.cadena>2,$<s.cadena>1);}else{yyerror("Ya existe la variable");flag_error==1;}}
 ;
-sentenciaCompuesta: '{'listaCompuesta'}' 
+
+sentenciaCompuesta: '{'listaCompuesta'}'
 ;
 listaCompuesta:  
-                |listaCompuesta '\n'
-                |listaCompuesta sentencia '\n'
+                |listaCompuesta finSentencia 
+                |listaCompuesta sentencia finSentencia
+finSentencia: 
+            | '\n' {lines ++}
+  
 ;
 sentencia: sentenciaCompuesta {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
           |sentenciaExpresion {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
@@ -88,11 +97,12 @@ sentencia: sentenciaCompuesta {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.
           |sentenciaIteracion {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
           |sentenciaSalto     {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
           |declaracion       {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
+          |definicionFuncion
 ;
 sentenciaExpresion: ';'       
                     |expresion';' {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
 ;
-sentenciaSeleccion:  IF'('expresion')' sentencia  {printf("fjanfa");}
+sentenciaSeleccion:  IF'('expresion')' sentencia 
                     |IF'('expresion')' sentencia ELSE sentencia
                     |SWITCH'('expresion')' sentencia
 ;
@@ -202,7 +212,8 @@ expresionUnaria: expresionPostfijo
                                                   strcpy($<s.cadena>$,$<s.cadena>1);
                                                   }else{
                                                     printf("Error de lValue");
-                                                    flag_error=1;YYERROR;}}                 | operadorUnario expresionUnaria 
+                                                    flag_error=1;YYERROR;}}                 
+                 | operadorUnario expresionUnaria 
                  | '-' expresionUnaria %prec NEG 
                  | '+' expresionUnaria %prec POS 
                  | '*' expresionUnaria %prec PUNT 
@@ -219,7 +230,7 @@ listaDeArgumentos: expresionAsignacion
 expresionPrimaria: NUM        
                    |ID        
                    |LCADENA   
-
+;
 
 
 
@@ -227,9 +238,8 @@ expresionPrimaria: NUM
 %%
 
 yyerror (s)  
-      char *s;
 {
-   printf ("%token\n", s);
+   printf ("Hubo un error en la linea %d",lines);
 }
 
 int main ()
