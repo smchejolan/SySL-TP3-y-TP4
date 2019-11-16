@@ -115,7 +115,6 @@ struct nodoId *buscarId(struct nodoId *puntero, char *idMatch){
             }
         }
     }
-    printf("No Lo reconoci bien: ");
     return punteroEncontrado;
 }
 

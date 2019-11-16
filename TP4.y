@@ -65,18 +65,50 @@ line: '\n' {lines++}
 declaracion:  variable  ';'  {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
               |declaracionFuncion ';'              {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
 ;
-declaracionFuncion: TIPODATO ID '('listaDeParametros')'                {if(controlId(punteroId,$<s.cadena>1)){punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));punteroFunc=agregarFuncion(punteroFunc,$<s.cadena>2,$<s.cadena>1);funcionActual=ultimoDeLaLista(punteroFunc);funcionActual->parametros=asignar(parametros);parametros=NULL;}else{yyerror("Ya existe la variable");flag_error==1;}}
-                    |VOID ID '('listaDeParametros')'                   {if(controlId(punteroId,$<s.cadena>1)){punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));punteroFunc=agregarFuncion(punteroFunc,$<s.cadena>2,$<s.cadena>1);funcionActual=ultimoDeLaLista(punteroFunc);funcionActual->parametros=asignar(parametros);parametros=NULL;}else{yyerror("Ya existe la variable");flag_error==1;}}
+declaracionFuncion: TIPODATO ID '('listaDeParametros')'                {if(controlId(punteroId,$<s.cadena>1)){
+                                                                        punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));
+                                                                        punteroFunc=agregarFuncion(punteroFunc,$<s.cadena>2,$<s.cadena>1);
+                                                                        funcionActual=ultimoDeLaLista(punteroFunc);
+                                                                        funcionActual->parametros=asignar(parametros);
+                                                                        parametros=NULL;
+                                                                        }else{
+                                                                          yyerror("Ya existe la variable");
+                                                                        flag_error==1;}}
+                    |VOID ID '('listaDeParametros')'                   {if(controlId(punteroId,$<s.cadena>1)){
+                                                                        punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));
+                                                                        punteroFunc=agregarFuncion(punteroFunc,$<s.cadena>2,$<s.cadena>1);
+                                                                        funcionActual=ultimoDeLaLista(punteroFunc);
+                                                                        funcionActual->parametros=asignar(parametros);
+                                                                        parametros=NULL;
+                                                                        }else{
+                                                                          yyerror("Ya existe la variable");
+                                                                          flag_error==1;}}
 ;
-definicionFuncion: TIPODATO ID '('listaDeParametros')' sentenciaCompuesta  {if(controlId(punteroId,$<s.cadena>1)){punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));punteroFunc=agregarFuncion(punteroFunc,$<s.cadena>2,$<s.cadena>1);funcionActual=ultimoDeLaLista(punteroFunc);}else{yyerror("Ya existe la variable");flag_error==1;}}
-                  |VOID ID '('listaDeParametros')' sentenciaCompuesta  {if(controlId(punteroId,$<s.cadena>1)){punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));punteroFunc=agregarFuncion(punteroFunc,$<s.cadena>2,$<s.cadena>1);funcionActual=ultimoDeLaLista(punteroFunc);}else{yyerror("Ya existe la variable");flag_error==1;}}
+definicionFuncion: TIPODATO ID '('listaDeParametros')' sentenciaCompuesta  {if(controlId(punteroId,$<s.cadena>1)){
+                                                                            punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));
+                                                                            punteroFunc=agregarFuncion(punteroFunc,$<s.cadena>2,$<s.cadena>1);
+                                                                            funcionActual=ultimoDeLaLista(punteroFunc);
+                                                                            funcionActual->parametros=asignar(parametros);
+                                                                            parametros=NULL;
+                                                                            }else{
+                                                                              yyerror("Ya existe la variable");
+                                                                              flag_error==1;}}
+                  |VOID ID '('listaDeParametros')' sentenciaCompuesta  {if(controlId(punteroId,$<s.cadena>1)){
+                                                                        punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));
+                                                                        punteroFunc=agregarFuncion(punteroFunc,$<s.cadena>2,$<s.cadena>1);
+                                                                        funcionActual=ultimoDeLaLista(punteroFunc);
+                                                                        funcionActual->parametros=asignar(parametros);
+                                                                        parametros=NULL;
+                                                                        }else{
+                                                                          yyerror("Ya existe la variable");
+                                                                          flag_error==1;}}
 
 ;
 listaDeParametros: 
                   |parametro 
                   |listaDeParametros ',' parametro 
 ;
-parametro: TIPODATO ID  {parametros=agregarVariable(parametros,$<s.cadena>2,$<s.cadena>1);}
+parametro: TIPODATO ID  {parametros=agregarVariable(parametros,$<s.cadena>2,$<s.cadena>1);/*mostrarListaVariables(parametros);*/}
 ;
 
 variable: TIPODATO ID {if(controlId){punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));punteroVariables=agregarVariable(punteroVariables,$<s.cadena>2,$<s.cadena>1);}else{yyerror("Ya existe la variable");flag_error==1;}}
@@ -250,4 +282,5 @@ int main ()
   mostrarListaVariables(punteroVariables);
   printf("----------------------\n");
   mostrarListaFuncion(punteroFunc);
+  mostrarListaVariables(parametros);
 }

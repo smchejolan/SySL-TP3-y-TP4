@@ -1,2 +1,4 @@
-if(1)
-int f;
+int main(int c, int x){
+	int b;
+	int a;
+}

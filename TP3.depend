@@ -11,3 +11,38 @@
 	<string.h>
 	<stdlib.h>
 
+1573741772 source:c:\users\matup\desktop\tp sinatxis actualizar\sysl-tp3-y-tp4\lex.yy.c
+	<stdio.h>
+	<stdlib.h>
+	<unistd.h>
+	<io.h>
+	<stdlib.h>
+	"TP4.tab.h"
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<ctype.h>
+	<stdlib.h>
+
+1573741828 c:\users\matup\desktop\tp sinatxis actualizar\sysl-tp3-y-tp4\tp4.tab.h
+
+1573741828 source:c:\users\matup\desktop\tp sinatxis actualizar\sysl-tp3-y-tp4\tp4.tab.c
+	<math.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"funciones.h"
+	<stddef.h>
+	<libintl.h>
+	<alloca.h>
+	<malloc.h>
+	<stdlib.h>
+	<stdlib.h>
+	<stdio.h>
+
+1573733375 c:\users\matup\desktop\tp sinatxis actualizar\sysl-tp3-y-tp4\funciones.h
+	<string.h>
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+
