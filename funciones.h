@@ -44,6 +44,27 @@ struct nodoVariable *agregarVariable(struct nodoVariable *puntero, char *nuevoId
     }
     return puntero;
 }
+void aplicarTipoVar(struct nodoVariable *puntero, char *tipoNuevo){
+	char *nuevoTIPO;
+	nuevoTIPO =(char *)malloc(sizeof(char *));
+	strcpy(nuevoTIPO,tipoNuevo);
+	if(puntero!=NULL){
+        struct nodoVariable *aux = puntero;
+        while(aux!=NULL){
+			aux->tipo = nuevoTIPO;
+            aux=aux->next;
+        }
+    }
+}
+void aplicarTipoId(struct nodoId *puntero, int nuevoTIPO){
+	if(puntero!=NULL){
+        struct nodoId *aux = puntero;
+        while(aux!=NULL){
+			aux->tipo = nuevoTIPO;
+            aux=aux->next;
+        }
+    }
+}
 struct nodoFuncion *agregarFuncion(struct nodoFuncion *puntero, char *nuevoId,char *nuevoTipo){
 	struct nodoFuncion *nuevo;
 	nuevo = (struct nodoFuncion*)malloc(sizeof(struct nodoFuncion));
@@ -67,6 +88,24 @@ struct nodoFuncion *agregarFuncion(struct nodoFuncion *puntero, char *nuevoId,ch
     }
     return puntero;
 }
+struct nodoId* ultimoDeLaListaId(struct nodoId* puntero){
+    struct nodoId *aux= puntero;
+	if(puntero!=NULL){
+        while(aux->next!=NULL){
+         	aux=aux->next;
+        }
+    }
+    return aux;
+}
+struct nodoVariable* ultimoDeLaListaVar(struct nodoVariable* puntero){
+    struct nodoVariable *aux= puntero;
+	if(puntero!=NULL){
+        while(aux->next!=NULL){
+         	aux=aux->next;
+        }
+    }
+    return aux;
+}
 struct nodoFuncion* ultimoDeLaLista(struct nodoFuncion* funcion){
     struct nodoFuncion *aux=funcion;
 	if(funcion!=NULL){
@@ -85,7 +124,10 @@ struct nodoVariable* asignar(struct nodoVariable* puntero){
 struct nodoId *agregarId(struct nodoId *puntero, char *nuevoId, int tipo){
 	struct nodoId *nuevo;
 	nuevo = (struct nodoId*)malloc(sizeof(struct nodoId));
-	nuevo->id=nuevoId;
+	char *nuevoID;
+	nuevoID =(char *)malloc(sizeof(char *));
+	strcpy(nuevoID,nuevoId);
+	nuevo->id=nuevoID;
 	nuevo->tipo=tipo;
 	nuevo->next=NULL;
 	if(puntero!=NULL){
@@ -122,9 +164,19 @@ struct nodoId *buscarId(struct nodoId *puntero, char *idMatch){
 void mostrarListaVariables(struct nodoVariable *puntero){
     struct nodoVariable *aux=puntero;
     if(puntero!=NULL){
-    	printf("ID     TIPO\n");
+		printf("ID\t\tTIPO\n");
         while(aux!=NULL){
-			printf("%s %s\n",aux->id,aux->tipo);
+			printf("%s\t\t%s\n",aux->id,aux->tipo);
+            aux=aux->next;
+        }
+	}
+}
+void mostrarListaId(struct nodoId *puntero){
+    struct nodoId *aux=puntero;
+    if(puntero!=NULL){
+    	printf("ID\t\tTIPO\n");
+        while(aux!=NULL){
+			printf("%s\t\t%d\n",aux->id,aux->tipo);
             aux=aux->next;
         }
     }
@@ -133,8 +185,8 @@ void mostrarListaFuncion(struct nodoFuncion *puntero){
     struct nodoFuncion *aux=puntero;
     if(puntero!=NULL){
         while(aux!=NULL){
-   	    	printf("ID     TIPO\n");
-            printf("%s %s\n",aux->id,aux->tipo);
+   	    	printf("ID\t\tTIPO\n");
+            printf("%s\t\t%s\n",aux->id,aux->tipo);
             printf("Parametros de %s:\n",aux->id);
             mostrarListaVariables((*aux).parametros);
             printf("---------------------------\n");
@@ -157,13 +209,12 @@ int lvalueError(char* cadena){
 
 int tipoId(struct nodoId *punteroId,char* cadena,int tipo){
 	if(tipo==5){
-		struct nodoId *a = buscarId(punteroId,cadena);{
-			if(a==NULL){
+			if(controlId(punteroId,cadena)){
 				return -1;
 			}else{
+				struct nodoId *a = buscarId(punteroId,cadena);
 				return a->tipo;
 			}
-		}
 	}else{
 		return tipo;
 	}

@@ -17,6 +17,10 @@ struct nodoFuncion *punteroFunc=NULL;
 struct nodoVariable *punteroVariables=NULL;
 struct nodoFuncion *funcionActual=NULL;
 struct nodoVariable *parametros=NULL;
+struct nodoVariable *actualDeclaracion = NULL;
+struct nodoId *actualId  = NULL;
+struct nodoVariable *ultimoVar;
+struct nodoId *ultimoId;
 int funciones=0;
 %}
 
@@ -56,16 +60,31 @@ line: '\n' {lines++}
       | sentencia '\n' {lines ++}
 ;
 
-// programa: global
-//           |programa global
-// ;
-// global: declaracion   {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
-//         |definicionFuncion  {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
-//;
-declaracion:  variable  ';'  {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
+sentenciaCompuesta: '{'listaCompuesta'}'
+;
+listaCompuesta:  
+                |line listaCompuesta 
+;
+/*finSentencia: 
+            | '\n' {lines ++}
+  
+;*/
+sentencia: sentenciaCompuesta {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
+          |sentenciaExpresion {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
+          |sentenciaSeleccion {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
+          |sentenciaIteracion {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
+          |sentenciaSalto     {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
+          |declaracion       {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
+          |definicionFuncion
+;
+
+declaracion:  declaracionVariable ';'           {
+                                                  actualId = NULL;
+                                                  actualDeclaracion = NULL;}
               |declaracionFuncion ';'              {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
 ;
-declaracionFuncion: TIPODATO ID '('listaDeParametros')'                {if(controlId(punteroId,$<s.cadena>1)){
+declaracionFuncion: TIPODATO ID '('listaDeParametros')'                {
+                                                                        if(controlId(punteroId,$<s.cadena>2)){
                                                                         punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));
                                                                         punteroFunc=agregarFuncion(punteroFunc,$<s.cadena>2,$<s.cadena>1);
                                                                         funcionActual=ultimoDeLaLista(punteroFunc);
@@ -74,7 +93,8 @@ declaracionFuncion: TIPODATO ID '('listaDeParametros')'                {if(contr
                                                                         }else{
                                                                           yyerror("Ya existe la variable");
                                                                         flag_error==1;}}
-                    |VOID ID '('listaDeParametros')'                   {if(controlId(punteroId,$<s.cadena>1)){
+                    |VOID ID '('listaDeParametros')'                   {
+                                                                        if(controlId(punteroId,$<s.cadena>2)){
                                                                         punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));
                                                                         punteroFunc=agregarFuncion(punteroFunc,$<s.cadena>2,$<s.cadena>1);
                                                                         funcionActual=ultimoDeLaLista(punteroFunc);
@@ -84,7 +104,8 @@ declaracionFuncion: TIPODATO ID '('listaDeParametros')'                {if(contr
                                                                           yyerror("Ya existe la variable");
                                                                           flag_error==1;}}
 ;
-definicionFuncion: TIPODATO ID '('listaDeParametros')' sentenciaCompuesta  {if(controlId(punteroId,$<s.cadena>1)){
+definicionFuncion: TIPODATO ID '('listaDeParametros')' sentenciaCompuesta  {
+                                                                            if(controlId(punteroId,$<s.cadena>2)){
                                                                             punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));
                                                                             punteroFunc=agregarFuncion(punteroFunc,$<s.cadena>2,$<s.cadena>1);
                                                                             funcionActual=ultimoDeLaLista(punteroFunc);
@@ -93,7 +114,8 @@ definicionFuncion: TIPODATO ID '('listaDeParametros')' sentenciaCompuesta  {if(c
                                                                             }else{
                                                                               yyerror("Ya existe la variable");
                                                                               flag_error==1;}}
-                  |VOID ID '('listaDeParametros')' sentenciaCompuesta  {if(controlId(punteroId,$<s.cadena>1)){
+                  |VOID ID '('listaDeParametros')' sentenciaCompuesta  {
+                                                                        if(controlId(punteroId,$<s.cadena>2)){
                                                                         punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));
                                                                         punteroFunc=agregarFuncion(punteroFunc,$<s.cadena>2,$<s.cadena>1);
                                                                         funcionActual=ultimoDeLaLista(punteroFunc);
@@ -110,32 +132,38 @@ listaDeParametros:
 ;
 parametro: TIPODATO ID  {parametros=agregarVariable(parametros,$<s.cadena>2,$<s.cadena>1);/*mostrarListaVariables(parametros);*/}
 ;
-
-variable: TIPODATO ID {if(controlId){punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));punteroVariables=agregarVariable(punteroVariables,$<s.cadena>2,$<s.cadena>1);}else{yyerror("Ya existe la variable");flag_error==1;}}
+declaracionVariable: TIPODATO listaDeVariables { 
+                                                aplicarTipoVar(actualDeclaracion,$<s.cadena>1);
+                                                aplicarTipoId(actualId,tipoDeDato($<s.cadena>1));
+                                                ultimoId=ultimoDeLaListaId(punteroId);
+                                                ultimoVar=ultimoDeLaListaVar(punteroVariables);
+                                                if(ultimoId==NULL){
+                                                  punteroId = actualId;
+                                                }else{;
+                                                  ultimoId->next = actualId;
+                                                }
+                                                if(ultimoVar == NULL){
+                                                  punteroVariables = actualDeclaracion;
+                                                }else{
+                                                 ultimoVar->next = actualDeclaracion;
+                                                }}
 ;
-
-sentenciaCompuesta: '{'listaCompuesta'}'
+listaDeVariables: variable  
+                  |variable ',' listaDeVariables
 ;
-listaCompuesta:  
-                |listaCompuesta finSentencia 
-                |listaCompuesta sentencia finSentencia
-finSentencia: 
-            | '\n' {lines ++}
-  
-;
-sentencia: sentenciaCompuesta {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
-          |sentenciaExpresion {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
-          |sentenciaSeleccion {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
-          |sentenciaIteracion {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
-          |sentenciaSalto     {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
-          |declaracion       {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
-          |definicionFuncion
+variable: ID                   {  
+                                if(controlId(punteroId,$<s.cadena>1) && controlId(actualId,$<s.cadena>1)){
+                                  actualDeclaracion=agregarVariable(actualDeclaracion,$<s.cadena>1,"");
+                                  actualId=agregarId(actualId,$<s.cadena>1,0);
+                                }else{
+                                  yyerror("Ya existe la variable");
+                                  flag_error==1;}}
 ;
 sentenciaExpresion: ';'       
                     |expresion';' {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
 ;
-sentenciaSeleccion:  IF'('expresion')' sentencia 
-                    |IF'('expresion')' sentencia ELSE sentencia
+sentenciaSeleccion: IF'('expresion')' sentencia ELSE sentencia
+                    | IF'('expresion')' sentencia 
                     |SWITCH'('expresion')' sentencia
 ;
 sentenciaIteracion: WHILE '(' expresion ')' sentencia
@@ -153,7 +181,8 @@ expresion: expresionAsignacion
 ;
 
 expresionAsignacion: expresionCondicional 
-                     |expresionUnaria operacionAsignacion expresionAsignacion   { if(lvalueError($<s.cadena>1)){
+                     |expresionUnaria operacionAsignacion expresionAsignacion   { 
+                                                                                  if(lvalueError($<s.cadena>1)){
                                                                                   printf("Error de lValue");
                                                                                   }else{
                                                                                   if(controlOperacion(punteroId,$<s.cadena>1,$<s.cadena>3,$<s.tipo>1,$<s.tipo>3)){
@@ -279,8 +308,8 @@ int main ()
   yyout = fopen("salida.txt","w");
   yyin = fopen("entrada.txt","r+");
   yyparse ();
+ 	printf("-------------Variables-------------\n");
   mostrarListaVariables(punteroVariables);
-  printf("----------------------\n");
+	printf("-------------Funciones-------------\n");
   mostrarListaFuncion(punteroFunc);
-  mostrarListaVariables(parametros);
 }
