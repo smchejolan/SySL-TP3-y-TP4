@@ -9,4 +9,9 @@ int main(int pwq,float cxcz,char scxz){
 	while(1+1){
 	dd = 2 +2 ;
 	}
+	if(1){
+	k = dd + 8;
+	}else{
+	int adnak;
+	}
 }
