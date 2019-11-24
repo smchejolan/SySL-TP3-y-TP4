@@ -1,6 +1,7 @@
 int a,b,c;
 int l;
-int main(int pwq,float cxcz,char scxz){
+int main(int ds,int vf);
+int main(int ds,int vf){
 	int k,dd,sa;
 	char f,gdd;
 	char sdad;

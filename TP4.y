@@ -91,8 +91,9 @@ declaracionFuncion: TIPODATO ID '('listaDeParametros')'                {
                                                                         funcionActual->parametros=asignar(parametros);
                                                                         parametros=NULL;
                                                                         }else{
-                                                                          yyerror("Ya existe la variable");
-                                                                        flag_error==1;}}
+                                                                           yyerror("Ya existe la variable\n");
+                                                                           printf("Ya existe la variable\n");             
+                                                                           flag_error==1;}}
                     |VOID ID '('listaDeParametros')'                   {
                                                                         if(controlId(punteroId,$<s.cadena>2)){
                                                                         punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));
@@ -101,7 +102,8 @@ declaracionFuncion: TIPODATO ID '('listaDeParametros')'                {
                                                                         funcionActual->parametros=asignar(parametros);
                                                                         parametros=NULL;
                                                                         }else{
-                                                                          yyerror("Ya existe la variable");
+                                                                          yyerror("Ya existe la variable\n");
+                                                                           printf("Ya existe la variable\n");
                                                                           flag_error==1;}}
 ;
 definicionFuncion: TIPODATO ID '('listaDeParametros')' sentenciaCompuesta  {
@@ -110,20 +112,28 @@ definicionFuncion: TIPODATO ID '('listaDeParametros')' sentenciaCompuesta  {
                                                                             punteroFunc=agregarFuncion(punteroFunc,$<s.cadena>2,$<s.cadena>1);
                                                                             funcionActual=ultimoDeLaLista(punteroFunc);
                                                                             funcionActual->parametros=asignar(parametros);
-                                                                            parametros=NULL;
                                                                             }else{
-                                                                              yyerror("Ya existe la variable");
-                                                                              flag_error==1;}}
+                                                                              funcionActual = buscarFuncion(punteroFunc,$<s.cadena>2);
+                                                                              if(strcmp(funcionActual->tipo,$<s.cadena>1)!=0 || !controlParametros(funcionActual->parametros,parametros)){
+                                                                                yyerror("Error en la defincion de la funcion");
+                                                                                printf("Error en la defincion de la funcion\n");                                                                               
+                                                                                flag_error==1;
+                                                                              }}
+                                                                              parametros=NULL;}
                   |VOID ID '('listaDeParametros')' sentenciaCompuesta  {
                                                                         if(controlId(punteroId,$<s.cadena>2)){
-                                                                        punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));
-                                                                        punteroFunc=agregarFuncion(punteroFunc,$<s.cadena>2,$<s.cadena>1);
-                                                                        funcionActual=ultimoDeLaLista(punteroFunc);
-                                                                        funcionActual->parametros=asignar(parametros);
-                                                                        parametros=NULL;
-                                                                        }else{
-                                                                          yyerror("Ya existe la variable");
-                                                                          flag_error==1;}}
+                                                                            punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));
+                                                                            punteroFunc=agregarFuncion(punteroFunc,$<s.cadena>2,$<s.cadena>1);
+                                                                            funcionActual=ultimoDeLaLista(punteroFunc);
+                                                                            funcionActual->parametros=asignar(parametros);
+                                                                            }else{
+                                                                              funcionActual = buscarFuncion(punteroFunc,$<s.cadena>2);
+                                                                              if(strcmp(funcionActual->tipo,$<s.cadena>1)!=0 || !controlParametros(funcionActual->parametros,parametros)){
+                                                                                 yyerror("Error en la defincion de la funcion");
+                                                                                 printf("Error en la defincion de la funcion\n");                                                                             
+                                                                                flag_error==1;
+                                                                              }}
+                                                                              parametros=NULL;}
 
 ;
 listaDeParametros: 
@@ -156,21 +166,22 @@ variable: ID                   {
                                   actualDeclaracion=agregarVariable(actualDeclaracion,$<s.cadena>1,"");
                                   actualId=agregarId(actualId,$<s.cadena>1,0);
                                 }else{
-                                  yyerror("Ya existe la variable");
+                                  yyerror("");
+                                  printf("Ya existe la variable\n");
                                   flag_error==1;}}
 ;
 sentenciaExpresion: ';'       
                     |expresion';' {$<s.tipo>$ = $<s.tipo>1; strcpy($<s.cadena>$,$<s.cadena>1);$<s.tipo>$=$<s.tipo>1}
 ;
-sentenciaSeleccion: IF'('expresion')' sentencia ELSE sentencia
-                    | IF'('expresion')' sentencia 
+sentenciaSeleccion: IF '('expresion ')' sentencia ELSE sentencia
+                    | IF '('expresion')' sentencia 
                     |SWITCH'('expresion')' sentencia
 ;
 sentenciaIteracion: WHILE '(' expresion ')' sentencia
-                    |DO sentencia WHILE'(' expresion ')' ';'
+                    |DO sentencia WHILE '(' expresion ')' ';'
                     |FOR '(' expresionOP ';' expresionOP ';' expresionOP ')' sentenciaCompuesta 
 ;
-sentenciaSalto: CONTINUE';'       
+sentenciaSalto: CONTINUE ';'       
                 |BREAK ';'
                 |RETURN expresion ';'
 ;
@@ -183,13 +194,15 @@ expresion: expresionAsignacion
 expresionAsignacion: expresionCondicional 
                      |expresionUnaria operacionAsignacion expresionAsignacion   { 
                                                                                   if(lvalueError($<s.cadena>1)){
-                                                                                  printf("Error de lValue");
+                                                                                  yyerror("");
+                                                                                  printf("Error de lValue\n");
                                                                                   }else{
                                                                                   if(controlOperacion(punteroId,$<s.cadena>1,$<s.cadena>3,$<s.tipo>1,$<s.tipo>3)){
                                                                                     $<s.tipo>$ = $<s.tipo>1; 
                                                                                     strcpy($<s.cadena>$,$<s.cadena>1);
                                                                                   }else{
-                                                                                    printf("Error de tipos");
+                                                                                    yyerror("");
+                                                                                    printf("Error de tipos\n");
                                                                                     flag_error=1;YYERROR;}}}
 ;
 operacionAsignacion: '='
@@ -204,13 +217,15 @@ expresionOr: expresionAnd
                                                                           $<s.tipo>$ = $<s.tipo>1;
                                                                           strcpy($<s.cadena>$,$<s.cadena>1);
                                                                           }else{
+                                                                            yyerror("");
                                                                           flag_error=1;YYERROR;}}
 ;
 expresionAnd: expresionIgualdad 
              |expresionAnd AND expresionIgualdad    {if(controlOperacion(punteroId,$<s.cadena>1,$<s.cadena>3,$<s.tipo>1,$<s.tipo>3)){
                                                                           $<s.tipo>$ = $<s.tipo>1;
                                                                           strcpy($<s.cadena>$,$<s.cadena>1);
-                                                                          }else{
+                                                                          }else{   
+                                                                            yyerror("");                                                                         
                                                                           flag_error=1;YYERROR;}}
 ;
 expresionIgualdad: expresionRelacional
@@ -219,6 +234,7 @@ expresionIgualdad: expresionRelacional
                                                                           strcpy($<s.cadena>$,$<s.cadena>1);
                                                                           $<s.tipo>$=$<s.tipo>1;
                                                                           }else{
+                                                                            yyerror("");
                                                                           flag_error=1;YYERROR;}}
 ;
 operadorComparacion: IGUALDAD DESIGUALDAD
@@ -229,6 +245,7 @@ expresionRelacional: expresionAditiva
                                                                           strcpy($<s.cadena>$,$<s.cadena>1);
                                                                           $<s.tipo>$=$<s.tipo>1;
                                                                           }else{
+                                                                            yyerror("");
                                                                           flag_error=1;YYERROR;}}
 ;
 operadorRelacional: '>' | '<' | MENORIGUAL | MAYORIGUAL
@@ -239,12 +256,14 @@ expresionAditiva: expresionMultiplicativa
                                                                           strcpy($<s.cadena>$,$<s.cadena>1);
                                                                           $<s.tipo>$=$<s.tipo>1;
                                                                           }else{
+                                                                            yyerror("");
                                                                           flag_error=1;YYERROR;}}
                   |expresionAditiva '-' expresionMultiplicativa  {if(controlOperacion(punteroId,$<s.cadena>1,$<s.cadena>3,$<s.tipo>1,$<s.tipo>3)){
                                                                           $<s.tipo>$ = $<s.tipo>1;
                                                                           strcpy($<s.cadena>$,$<s.cadena>1);
                                                                           $<s.tipo>$=$<s.tipo>1;
                                                                           }else{
+                                                                            yyerror("");
                                                                           flag_error=1;YYERROR;}}
 ;
 expresionMultiplicativa:  expresionUnaria 
@@ -253,12 +272,14 @@ expresionMultiplicativa:  expresionUnaria
                                                                           strcpy($<s.cadena>$,$<s.cadena>1);
                                                                           $<s.tipo>$=$<s.tipo>1;
                                                                           }else{
+                                                                            yyerror("");
                                                                           flag_error=1;YYERROR;}}
                           | expresionMultiplicativa '/' expresionUnaria  {if(controlOperacion(punteroId,$<s.cadena>1,$<s.cadena>3,$<s.tipo>1,$<s.tipo>3)){
                                                                           $<s.tipo>$ = $<s.tipo>1;
                                                                           strcpy($<s.cadena>$,$<s.cadena>1);
                                                                           $<s.tipo>$=$<s.tipo>1;
                                                                           }else{
+                                                                            yyerror("");
                                                                           flag_error=1;YYERROR;}}
 ;
 expresionUnaria: expresionPostfijo 
@@ -266,13 +287,15 @@ expresionUnaria: expresionPostfijo
                                                   $<s.tipo>$ = $<s.tipo>1;
                                                   strcpy($<s.cadena>$,$<s.cadena>1);
                                                   }else{
-                                                    printf("Error de lValue");
+                                                    yyerror("");
+                                                    printf("Error de lValue\n");
                                                     flag_error=1;YYERROR;}}
                  | expresionUnaria DECREMENTO {  if(!lvalueError($<s.cadena>1)){
                                                   $<s.tipo>$ = $<s.tipo>1;
                                                   strcpy($<s.cadena>$,$<s.cadena>1);
                                                   }else{
-                                                    printf("Error de lValue");
+                                                    yyerror("");
+                                                    printf("Error de lValue\n");
                                                     flag_error=1;YYERROR;}}                 
                  | operadorUnario expresionUnaria 
                  | '-' expresionUnaria %prec NEG 
@@ -300,7 +323,7 @@ expresionPrimaria: NUM
 
 yyerror (s)  
 {
-   printf ("Hubo un error en la linea %d",lines);
+   printf ("Hubo un error en la linea %d ",lines);
 }
 
 int main ()

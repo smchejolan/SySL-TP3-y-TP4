@@ -160,6 +160,23 @@ struct nodoId *buscarId(struct nodoId *puntero, char *idMatch){
     return punteroEncontrado;
 }
 
+struct nodoFuncion *buscarFuncion(struct nodoFuncion *puntero, char *idMatch){
+    struct nodoFuncion *punteroEncontrado = NULL;
+    int encontrado=0;
+    if(puntero!=NULL){
+        struct nodoFuncion *aux=puntero;
+        while(aux!=NULL && encontrado==0){
+            if(strcmp(aux->id,idMatch)==0){
+                punteroEncontrado=aux;
+                encontrado=1;
+            }else{
+                aux=aux->next;
+
+            }
+        }
+    }
+    return punteroEncontrado;
+}
 
 void mostrarListaVariables(struct nodoVariable *puntero){
     struct nodoVariable *aux=puntero;
@@ -207,6 +224,54 @@ int lvalueError(char* cadena){
 	}
 }
 
+int sizeListaVar(struct nodoVariable *puntero){
+	int cont = 0; 
+	struct nodoVariable *aux=puntero;
+    if(puntero!=NULL){
+        while(aux!=NULL){
+			cont++;
+            aux=aux->next;
+        }
+	}
+	return cont;
+}
+
+int controlParametros(struct nodoVariable *original,struct nodoVariable *nuevo){
+	if(sizeListaVar(original) != sizeListaVar(nuevo)){
+		return 0;
+	}
+	struct nodoVariable *auxO=original;
+	struct nodoVariable *auxN=nuevo;
+	if(original!=NULL){
+        while(auxO!=NULL){
+			if(strcmp(auxO->tipo,auxN->tipo) || strcmp(auxO->id,auxN->id)){	
+				return 0;
+			}
+            auxO=auxO->next;
+            auxN=auxN->next;
+        }
+	}	
+	return 1;
+}
+
+int controlArgumentos(struct nodoVariable *parametros,struct nodoVariable *argumentos){
+	if(sizeListaVar(parametros) != sizeListaVar(argumentos)){
+		return 0;
+	}
+	struct nodoVariable *auxO=parametros;
+	struct nodoVariable *auxN=argumentos;
+	if(parametros!=NULL){
+        while(auxO!=NULL){
+			if(strcmp(auxO->tipo,auxN->tipo)){	
+				return 0;
+			}
+            auxO=auxO->next;
+            auxN=auxN->next;
+        }
+	}	
+	return 1;
+}
+
 int tipoId(struct nodoId *punteroId,char* cadena,int tipo){
 	if(tipo==5){
 			if(controlId(punteroId,cadena)){
@@ -235,7 +300,7 @@ int controlOperacion(struct nodoId *punteroId,char *cadena1,char *cadena2,int ti
 		printf("No existe el identificador\n");
 		return 0;
 	}else if(!controlDeTiposOperacion(tipo1,tipo2)){
-			printf("Error de tipos");
+			printf("Error de tipos\n");
 			return 0;
 	}else{
 		return 1;
