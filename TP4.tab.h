@@ -88,7 +88,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 28 "TP4.y"
+#line 29 "TP4.y"
 
     struct{
     char cadena[50];

@@ -17,6 +17,7 @@ struct nodoFuncion *punteroFunc=NULL;
 struct nodoVariable *punteroVariables=NULL;
 struct nodoFuncion *funcionActual=NULL;
 struct nodoVariable *parametros=NULL;
+struct nodoVariable *argumentosP=NULL;
 struct nodoVariable *actualDeclaracion = NULL;
 struct nodoId *actualId  = NULL;
 struct nodoVariable *ultimoVar;
@@ -89,22 +90,22 @@ declaracionFuncion: TIPODATO ID '('listaDeParametros')'                {
                                                                         punteroFunc=agregarFuncion(punteroFunc,$<s.cadena>2,$<s.cadena>1);
                                                                         funcionActual=ultimoDeLaLista(punteroFunc);
                                                                         funcionActual->parametros=asignar(parametros);
-                                                                        parametros=NULL;
                                                                         }else{
                                                                            yyerror("Ya existe la variable\n");
                                                                            printf("Ya existe la variable\n");             
-                                                                           flag_error==1;}}
+                                                                           flag_error==1;}
+                                                                        parametros=NULL;}
                     |VOID ID '('listaDeParametros')'                   {
                                                                         if(controlId(punteroId,$<s.cadena>2)){
                                                                         punteroId=agregarId(punteroId,$<s.cadena>2,tipoDeDato($<s.cadena>1));
                                                                         punteroFunc=agregarFuncion(punteroFunc,$<s.cadena>2,$<s.cadena>1);
                                                                         funcionActual=ultimoDeLaLista(punteroFunc);
                                                                         funcionActual->parametros=asignar(parametros);
-                                                                        parametros=NULL;
                                                                         }else{
                                                                           yyerror("Ya existe la variable\n");
                                                                            printf("Ya existe la variable\n");
-                                                                          flag_error==1;}}
+                                                                          flag_error==1;}
+                                                                        parametros=NULL;}
 ;
 definicionFuncion: TIPODATO ID '('listaDeParametros')' sentenciaCompuesta  {
                                                                             if(controlId(punteroId,$<s.cadena>2)){
@@ -306,10 +307,37 @@ operadorUnario: '&'|'!'
 ;
 expresionPostfijo: expresionPrimaria                 
                   |expresionPostfijo'['expresion']'   
-                  |expresionPostfijo'('listaDeArgumentos')' 
+                  |expresionPostfijo'('listaDeArgumentos')' {
+                                                              if($<s.tipo>1==5){
+                                                                funcionActual = buscarFuncion(punteroFunc,$<s.cadena>1);
+                                                                if(funcionActual!=NULL){
+                                                                  if(!controlArgumentos(funcionActual->parametros,argumentosP)){
+                                                                    yyerror("");
+                                                                    printf("No se corresponden los argumentos con la funcion\n");
+                                                                  }
+                                                                }else{
+                                                                  yyerror("");
+                                                                  printf("No existe la funcion\n");
+                                                                }
+                                                              }else{
+                                                                yyerror("");
+                                                                printf("No es una funcion\n");
+                                                              }
+                                                              argumentosP==NULL;
+                                                             }
 ;
-listaDeArgumentos: expresionAsignacion
-                   |listaDeArgumentos ',' expresionAsignacion
+listaDeArgumentos: argumento
+                   |listaDeArgumentos ',' argumento
+;
+argumento: expresion        {
+                              int tipo = tipoId(punteroId,$<s.cadena>1,$<s.tipo>1);
+                              if(tipo == -1){
+                                yyerror("");
+                                printf("No existe la variable\n");
+                              }else{
+                                argumentosP=agregarVariable(argumentosP,$<s.cadena>1,tipoDeDatoC(tipo));
+                              }
+                              }
 ;
 expresionPrimaria: NUM        
                    |ID        

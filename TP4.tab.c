@@ -88,6 +88,7 @@ struct nodoFuncion *punteroFunc=NULL;
 struct nodoVariable *punteroVariables=NULL;
 struct nodoFuncion *funcionActual=NULL;
 struct nodoVariable *parametros=NULL;
+struct nodoVariable *argumentosP=NULL;
 struct nodoVariable *actualDeclaracion = NULL;
 struct nodoId *actualId  = NULL;
 struct nodoVariable *ultimoVar;
@@ -96,7 +97,7 @@ int funciones=0;
 
 
 /* Line 189 of yacc.c  */
-#line 100 "TP4.tab.c"
+#line 101 "TP4.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -172,7 +173,7 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 28 "TP4.y"
+#line 29 "TP4.y"
 
     struct{
     char cadena[50];
@@ -183,7 +184,7 @@ typedef union YYSTYPE
 
 
 /* Line 214 of yacc.c  */
-#line 187 "TP4.tab.c"
+#line 188 "TP4.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -195,7 +196,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 199 "TP4.tab.c"
+#line 200 "TP4.tab.c"
 
 #ifdef short
 # undef short
@@ -410,16 +411,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  2
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   227
+#define YYLAST   231
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  62
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  36
+#define YYNNTS  37
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  87
+#define YYNRULES  88
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  156
+#define YYNSTATES  157
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
@@ -476,7 +477,7 @@ static const yytype_uint16 yyprhs[] =
      165,   167,   173,   175,   179,   181,   185,   187,   191,   194,
      196,   200,   202,   204,   206,   208,   210,   214,   218,   220,
      224,   228,   230,   233,   236,   239,   242,   245,   248,   250,
-     252,   254,   259,   264,   266,   270,   272,   274
+     252,   254,   259,   264,   266,   270,   272,   274,   276
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
@@ -507,23 +508,23 @@ static const yytype_int8 yyrhs[] =
       92,    39,    93,    -1,    92,    40,    93,    -1,    95,    -1,
       93,    11,    -1,    93,    12,    -1,    94,    93,    -1,    42,
       93,    -1,    41,    93,    -1,    39,    93,    -1,    44,    -1,
-      45,    -1,    97,    -1,    95,    51,    81,    52,    -1,    95,
-      53,    96,    54,    -1,    82,    -1,    96,    43,    82,    -1,
-       3,    -1,     5,    -1,     4,    -1
+      45,    -1,    98,    -1,    95,    51,    81,    52,    -1,    95,
+      53,    96,    54,    -1,    97,    -1,    96,    43,    97,    -1,
+      81,    -1,     3,    -1,     5,    -1,     4,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    55,    55,    56,    58,    59,    60,    63,    65,    66,
-      72,    73,    74,    75,    76,    77,    78,    81,    84,    86,
-      96,   107,   117,   129,   130,   131,   133,   135,   151,   152,
-     154,   162,   163,   165,   166,   167,   169,   170,   171,   173,
-     174,   175,   177,   178,   180,   183,   184,   195,   196,   197,
-     199,   200,   202,   203,   209,   210,   216,   217,   224,   226,
-     227,   234,   234,   234,   234,   236,   237,   243,   250,   251,
-     257,   264,   265,   271,   277,   278,   279,   280,   282,   282,
-     284,   285,   286,   288,   289,   291,   292,   293
+       0,    56,    56,    57,    59,    60,    61,    64,    66,    67,
+      73,    74,    75,    76,    77,    78,    79,    82,    85,    87,
+      98,   110,   124,   140,   141,   142,   144,   146,   162,   163,
+     165,   174,   175,   177,   178,   179,   181,   182,   183,   185,
+     186,   187,   189,   190,   192,   195,   196,   209,   210,   211,
+     213,   214,   216,   217,   224,   225,   232,   233,   241,   243,
+     244,   252,   252,   252,   252,   254,   255,   262,   270,   271,
+     278,   286,   287,   294,   301,   302,   303,   304,   306,   306,
+     308,   309,   310,   329,   330,   332,   342,   343,   344
 };
 #endif
 
@@ -550,7 +551,8 @@ static const char *const yytname[] =
   "expresionAnd", "expresionIgualdad", "operadorComparacion",
   "expresionRelacional", "operadorRelacional", "expresionAditiva",
   "expresionMultiplicativa", "expresionUnaria", "operadorUnario",
-  "expresionPostfijo", "listaDeArgumentos", "expresionPrimaria", 0
+  "expresionPostfijo", "listaDeArgumentos", "argumento",
+  "expresionPrimaria", 0
 };
 #endif
 
@@ -580,7 +582,7 @@ static const yytype_uint8 yyr1[] =
       84,    84,    85,    85,    86,    86,    87,    87,    88,    89,
       89,    90,    90,    90,    90,    91,    91,    91,    92,    92,
       92,    93,    93,    93,    93,    93,    93,    93,    94,    94,
-      95,    95,    95,    96,    96,    97,    97,    97
+      95,    95,    95,    96,    96,    97,    98,    98,    98
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
@@ -594,7 +596,7 @@ static const yytype_uint8 yyr2[] =
        1,     5,     1,     3,     1,     3,     1,     3,     2,     1,
        3,     1,     1,     1,     1,     1,     3,     3,     1,     3,
        3,     1,     2,     2,     2,     2,     2,     2,     1,     1,
-       1,     4,     4,     1,     3,     1,     1,     1
+       1,     4,     4,     1,     3,     1,     1,     1,     1
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -602,7 +604,7 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       2,     0,     1,    85,    87,    86,     0,     0,     0,     0,
+       2,     0,     1,    86,    88,    87,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,    78,
       79,     8,     4,    31,     3,    10,     5,    15,     0,    16,
        0,    11,    12,    13,    14,     0,    44,    45,    50,    52,
@@ -613,52 +615,52 @@ static const yytype_uint8 yydefact[] =
        0,     0,     0,    72,    73,    48,    49,    47,     0,    74,
        0,     0,    23,     0,    23,    41,     0,     0,     0,     0,
       43,     0,     9,     7,    53,    68,     0,    55,    58,    57,
-      60,    66,    67,    69,    70,    46,     0,    83,     0,     0,
-       0,    24,    30,    29,     0,     0,     0,     0,    42,     0,
-       0,    81,     0,    82,    26,     0,    19,    20,    34,     0,
-      36,     0,    35,    51,    84,    25,    21,    22,     0,     0,
-      42,    33,    37,     0,     0,    38
+      60,    66,    67,    69,    70,    46,     0,    85,     0,    83,
+       0,     0,    24,    30,    29,     0,     0,     0,     0,    42,
+       0,     0,    81,     0,    82,    26,     0,    19,    20,    34,
+       0,    36,     0,    35,    51,    84,    25,    21,    22,     0,
+       0,    42,    33,    37,     0,     0,    38
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     1,    63,    25,    64,    26,    27,    28,    29,   120,
-     121,    30,    49,    50,    31,    32,    33,    34,    99,    35,
+      -1,     1,    63,    25,    64,    26,    27,    28,    29,   121,
+     122,    30,    49,    50,    31,    32,    33,    34,    99,    35,
       36,    88,    37,    38,    39,    40,    73,    41,    78,    42,
-      43,    44,    45,    46,   118,    47
+      43,    44,    45,    46,   118,   119,    47
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -129
+#define YYPACT_NINF -131
 static const yytype_int16 yypact[] =
 {
-    -129,   124,  -129,  -129,  -129,  -129,    32,    33,    39,   -14,
-      70,   -13,   -12,    -7,    -6,     1,    39,    39,    39,  -129,
-    -129,   171,  -129,  -129,  -129,  -129,     4,  -129,     5,  -129,
-      12,  -129,  -129,  -129,  -129,    13,  -129,  -129,   -11,    51,
-      49,    -5,   -18,   -24,     7,    39,   -22,  -129,    18,  -129,
-      29,    24,    23,    39,    60,    39,    39,    39,  -129,  -129,
-      21,    21,    21,   171,    37,  -129,  -129,  -129,  -129,    39,
-      39,    39,    68,    39,  -129,  -129,  -129,  -129,    39,    39,
-      39,    39,    39,  -129,  -129,  -129,  -129,  -129,    39,    21,
-      39,    39,    83,    85,    83,  -129,    42,    38,    44,    43,
-    -129,    46,  -129,  -129,    51,    21,    56,    49,  -129,    -5,
-     -18,   -24,   -24,    21,    21,  -129,    53,  -129,   -32,   101,
-     -29,  -129,  -129,  -129,   -26,    70,    39,    70,    39,    70,
-      39,  -129,    39,  -129,  -129,    83,    58,    58,    82,    59,
-    -129,    54,  -129,  -129,  -129,  -129,  -129,  -129,    70,    61,
-      39,  -129,  -129,    62,    58,  -129
+    -131,   128,  -131,  -131,  -131,  -131,    13,    18,    47,   -24,
+      71,   -22,   -14,   -13,   -12,    -3,    47,    47,    47,  -131,
+    -131,   175,  -131,  -131,  -131,  -131,     0,  -131,     1,  -131,
+       5,  -131,  -131,  -131,  -131,    12,  -131,  -131,   -11,    32,
+      21,     2,   -20,    -7,    -2,    47,   -37,  -131,   -10,  -131,
+      26,    17,    15,    47,    48,    47,    47,    47,  -131,  -131,
+      23,    23,    23,   175,    22,  -131,  -131,  -131,  -131,    47,
+      47,    47,    58,    47,  -131,  -131,  -131,  -131,    47,    47,
+      47,    47,    47,  -131,  -131,  -131,  -131,  -131,    47,    23,
+      47,    47,    73,    75,    73,  -131,    27,    31,    36,    29,
+    -131,    43,  -131,  -131,    32,    23,    53,    21,  -131,     2,
+     -20,    -7,    -7,    23,    23,  -131,    49,  -131,   -30,  -131,
+      95,   -28,  -131,  -131,  -131,   -26,    71,    47,    71,    47,
+      71,    47,  -131,    47,  -131,  -131,    73,    54,    54,    80,
+      55,  -131,    51,  -131,  -131,  -131,  -131,  -131,  -131,    71,
+      52,    47,  -131,  -131,    57,    54,  -131
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int16 yypgoto[] =
 {
-    -129,  -129,   130,  -128,    69,    -4,  -129,  -129,  -129,    40,
-      -2,  -129,    45,  -129,  -129,  -129,  -129,  -129,  -123,    -8,
-     -81,  -129,  -129,  -129,    66,    65,  -129,    64,  -129,    63,
-     -45,   -15,  -129,  -129,  -129,  -129
+    -131,  -131,   113,  -130,    66,    -4,  -131,  -131,  -131,    24,
+     -19,  -131,    37,  -131,  -131,  -131,  -131,  -131,  -124,    -8,
+      50,  -131,  -131,  -131,    67,    64,  -131,    68,  -131,    59,
+     -42,   -15,  -131,  -131,  -131,     6,  -131
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -668,56 +670,58 @@ static const yytype_int16 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-      52,    60,    61,    62,    69,   141,    54,   115,   146,   147,
-     117,   132,    74,    75,   135,    81,    82,   135,    83,    84,
-      85,    86,   133,    79,    80,   136,   155,   153,   137,    90,
-      89,    91,    83,    84,   111,   112,    70,    48,    51,    53,
-      55,    56,     3,     4,     5,    96,    57,    98,   100,   101,
-      58,   144,    76,    77,   105,    87,   105,    59,   105,    65,
-      71,    66,   106,   105,   105,   105,   113,   114,    67,    68,
-      72,    92,    93,     3,     4,     5,     6,    94,    16,    95,
-      17,    18,   116,    19,    20,    97,     7,   103,   108,   119,
-     122,   126,     8,     9,    10,    11,   125,    12,   127,   128,
-     129,    13,   130,    14,    15,   131,   134,    21,   148,    16,
-     150,    17,    18,   149,    19,    20,   154,   152,   139,    21,
-     100,   138,   143,   140,     2,   142,    23,     3,     4,     5,
-       6,    24,   102,   145,   124,   104,   107,   109,   123,     0,
-       7,   110,   100,     0,   151,     0,     8,     9,    10,    11,
-       0,    12,     0,     0,     0,    13,     0,    14,    15,     0,
-       0,     0,     0,    16,     0,    17,    18,     0,    19,    20,
-       0,     0,     0,    21,     3,     4,     5,     6,     0,    22,
-      23,     0,     0,     0,     0,     0,     0,     7,     0,     0,
-       0,     0,     0,     8,     9,    10,    11,     0,    12,     0,
-       0,     0,    13,     0,    14,    15,     0,     0,     0,     0,
-      16,     0,    17,    18,     0,    19,    20,     0,     0,     0,
-      21,     0,     0,     0,     0,     0,    22,    23
+      52,    60,    61,    62,    69,   142,    54,   147,   148,    83,
+      84,    85,    86,   133,    90,   136,    91,   136,    48,    74,
+      75,    79,    80,    51,   134,   156,   137,   154,   138,    53,
+      89,    55,    81,    82,    83,    84,    70,   111,   112,    56,
+      57,    71,    72,    92,    58,    96,    87,    98,   100,   101,
+       3,     4,     5,    59,   105,    65,   105,    66,   105,    76,
+      77,    67,   106,   105,   105,   105,   113,   114,    68,    93,
+      94,    95,   103,    97,     3,     4,     5,     6,   108,   120,
+     123,   126,   116,   117,   127,   129,    16,     7,    17,    18,
+     128,    19,    20,     8,     9,    10,    11,   130,    12,   131,
+     135,   132,    13,    21,    14,    15,   149,   151,   153,   150,
+      16,   155,    17,    18,    24,    19,    20,   146,   125,   140,
+      21,   100,   139,   144,   141,   117,   143,    23,     2,   102,
+     124,     3,     4,     5,     6,   107,   104,   110,   115,   145,
+       0,   109,     0,   100,     7,   152,     0,     0,     0,     0,
+       8,     9,    10,    11,     0,    12,     0,     0,     0,    13,
+       0,    14,    15,     0,     0,     0,     0,    16,     0,    17,
+      18,     0,    19,    20,     0,     0,     0,    21,     3,     4,
+       5,     6,     0,    22,    23,     0,     0,     0,     0,     0,
+       0,     7,     0,     0,     0,     0,     0,     8,     9,    10,
+      11,     0,    12,     0,     0,     0,    13,     0,    14,    15,
+       0,     0,     0,     0,    16,     0,    17,    18,     0,    19,
+      20,     0,     0,     0,    21,     0,     0,     0,     0,     0,
+      22,    23
 };
 
 static const yytype_int16 yycheck[] =
 {
-       8,    16,    17,    18,    15,   128,    10,    88,   136,   137,
-      91,    43,    17,    18,    43,    39,    40,    43,    11,    12,
-      13,    14,    54,    41,    42,    54,   154,   150,    54,    51,
-      45,    53,    11,    12,    79,    80,    47,     5,     5,    53,
-      53,    53,     3,     4,     5,    53,    53,    55,    56,    57,
-      56,   132,    57,    58,    69,    48,    71,    56,    73,    55,
-       9,    56,    70,    78,    79,    80,    81,    82,    56,    56,
-      21,    53,    43,     3,     4,     5,     6,    53,    39,    56,
-      41,    42,    90,    44,    45,    25,    16,    50,    20,     6,
-       5,    53,    22,    23,    24,    25,    54,    27,    54,    56,
-      54,    31,    46,    33,    34,    52,     5,    49,    26,    39,
-      56,    41,    42,    54,    44,    45,    54,    56,   126,    49,
-     128,   125,   130,   127,     0,   129,    56,     3,     4,     5,
-       6,     1,    63,   135,    94,    69,    71,    73,    93,    -1,
-      16,    78,   150,    -1,   148,    -1,    22,    23,    24,    25,
-      -1,    27,    -1,    -1,    -1,    31,    -1,    33,    34,    -1,
-      -1,    -1,    -1,    39,    -1,    41,    42,    -1,    44,    45,
-      -1,    -1,    -1,    49,     3,     4,     5,     6,    -1,    55,
-      56,    -1,    -1,    -1,    -1,    -1,    -1,    16,    -1,    -1,
-      -1,    -1,    -1,    22,    23,    24,    25,    -1,    27,    -1,
-      -1,    -1,    31,    -1,    33,    34,    -1,    -1,    -1,    -1,
-      39,    -1,    41,    42,    -1,    44,    45,    -1,    -1,    -1,
-      49,    -1,    -1,    -1,    -1,    -1,    55,    56
+       8,    16,    17,    18,    15,   129,    10,   137,   138,    11,
+      12,    13,    14,    43,    51,    43,    53,    43,     5,    17,
+      18,    41,    42,     5,    54,   155,    54,   151,    54,    53,
+      45,    53,    39,    40,    11,    12,    47,    79,    80,    53,
+      53,     9,    21,    53,    56,    53,    48,    55,    56,    57,
+       3,     4,     5,    56,    69,    55,    71,    56,    73,    57,
+      58,    56,    70,    78,    79,    80,    81,    82,    56,    43,
+      53,    56,    50,    25,     3,     4,     5,     6,    20,     6,
+       5,    54,    90,    91,    53,    56,    39,    16,    41,    42,
+      54,    44,    45,    22,    23,    24,    25,    54,    27,    46,
+       5,    52,    31,    49,    33,    34,    26,    56,    56,    54,
+      39,    54,    41,    42,     1,    44,    45,   136,    94,   127,
+      49,   129,   126,   131,   128,   133,   130,    56,     0,    63,
+      93,     3,     4,     5,     6,    71,    69,    78,    88,   133,
+      -1,    73,    -1,   151,    16,   149,    -1,    -1,    -1,    -1,
+      22,    23,    24,    25,    -1,    27,    -1,    -1,    -1,    31,
+      -1,    33,    34,    -1,    -1,    -1,    -1,    39,    -1,    41,
+      42,    -1,    44,    45,    -1,    -1,    -1,    49,     3,     4,
+       5,     6,    -1,    55,    56,    -1,    -1,    -1,    -1,    -1,
+      -1,    16,    -1,    -1,    -1,    -1,    -1,    22,    23,    24,
+      25,    -1,    27,    -1,    -1,    -1,    31,    -1,    33,    34,
+      -1,    -1,    -1,    -1,    39,    -1,    41,    42,    -1,    44,
+      45,    -1,    -1,    -1,    49,    -1,    -1,    -1,    -1,    -1,
+      55,    56
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
@@ -728,18 +732,18 @@ static const yytype_uint8 yystos[] =
       24,    25,    27,    31,    33,    34,    39,    41,    42,    44,
       45,    49,    55,    56,    64,    65,    67,    68,    69,    70,
       73,    76,    77,    78,    79,    81,    82,    84,    85,    86,
-      87,    89,    91,    92,    93,    94,    95,    97,     5,    74,
+      87,    89,    91,    92,    93,    94,    95,    98,     5,    74,
       75,     5,    81,    53,    67,    53,    53,    53,    56,    56,
       93,    93,    93,    64,    66,    55,    56,    56,    56,    15,
       47,     9,    21,    88,    17,    18,    57,    58,    90,    41,
       42,    39,    40,    11,    12,    13,    14,    48,    83,    93,
       51,    53,    53,    43,    53,    56,    81,    25,    81,    80,
       81,    81,    66,    50,    86,    93,    81,    87,    20,    89,
-      91,    92,    92,    93,    93,    82,    81,    82,    96,     6,
-      71,    72,     5,    74,    71,    54,    53,    54,    56,    54,
-      46,    52,    43,    54,     5,    43,    54,    54,    67,    81,
-      67,    80,    67,    81,    82,    72,    65,    65,    26,    54,
-      56,    67,    56,    80,    54,    65
+      91,    92,    92,    93,    93,    82,    81,    81,    96,    97,
+       6,    71,    72,     5,    74,    71,    54,    53,    54,    56,
+      54,    46,    52,    43,    54,     5,    43,    54,    54,    67,
+      81,    67,    80,    67,    81,    97,    72,    65,    65,    26,
+      54,    56,    67,    56,    80,    54,    65
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1553,63 +1557,63 @@ yyreduce:
         case 4:
 
 /* Line 1455 of yacc.c  */
-#line 58 "TP4.y"
+#line 59 "TP4.y"
     {lines++;}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 60 "TP4.y"
+#line 61 "TP4.y"
     {lines ++;}
     break;
 
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 72 "TP4.y"
+#line 73 "TP4.y"
     {(yyval.s.tipo) = (yyvsp[(1) - (1)].s.tipo); strcpy((yyval.s.cadena),(yyvsp[(1) - (1)].s.cadena));(yyval.s.tipo)=(yyvsp[(1) - (1)].s.tipo);}
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 73 "TP4.y"
+#line 74 "TP4.y"
     {(yyval.s.tipo) = (yyvsp[(1) - (1)].s.tipo); strcpy((yyval.s.cadena),(yyvsp[(1) - (1)].s.cadena));(yyval.s.tipo)=(yyvsp[(1) - (1)].s.tipo);}
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 74 "TP4.y"
+#line 75 "TP4.y"
     {(yyval.s.tipo) = (yyvsp[(1) - (1)].s.tipo); strcpy((yyval.s.cadena),(yyvsp[(1) - (1)].s.cadena));(yyval.s.tipo)=(yyvsp[(1) - (1)].s.tipo);}
     break;
 
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 75 "TP4.y"
+#line 76 "TP4.y"
     {(yyval.s.tipo) = (yyvsp[(1) - (1)].s.tipo); strcpy((yyval.s.cadena),(yyvsp[(1) - (1)].s.cadena));(yyval.s.tipo)=(yyvsp[(1) - (1)].s.tipo);}
     break;
 
   case 14:
 
 /* Line 1455 of yacc.c  */
-#line 76 "TP4.y"
+#line 77 "TP4.y"
     {(yyval.s.tipo) = (yyvsp[(1) - (1)].s.tipo); strcpy((yyval.s.cadena),(yyvsp[(1) - (1)].s.cadena));(yyval.s.tipo)=(yyvsp[(1) - (1)].s.tipo);}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 77 "TP4.y"
+#line 78 "TP4.y"
     {(yyval.s.tipo) = (yyvsp[(1) - (1)].s.tipo); strcpy((yyval.s.cadena),(yyvsp[(1) - (1)].s.cadena));(yyval.s.tipo)=(yyvsp[(1) - (1)].s.tipo);}
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 81 "TP4.y"
+#line 82 "TP4.y"
     {
                                                   actualId = NULL;
                                                   actualDeclaracion = NULL;;}
@@ -1618,85 +1622,95 @@ yyreduce:
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 84 "TP4.y"
+#line 85 "TP4.y"
     {(yyval.s.tipo) = (yyvsp[(1) - (2)].s.tipo); strcpy((yyval.s.cadena),(yyvsp[(1) - (2)].s.cadena));(yyval.s.tipo)=(yyvsp[(1) - (2)].s.tipo);}
     break;
 
   case 19:
 
 /* Line 1455 of yacc.c  */
-#line 86 "TP4.y"
+#line 87 "TP4.y"
     {
                                                                         if(controlId(punteroId,(yyvsp[(2) - (5)].s.cadena))){
                                                                         punteroId=agregarId(punteroId,(yyvsp[(2) - (5)].s.cadena),tipoDeDato((yyvsp[(1) - (5)].s.cadena)));
                                                                         punteroFunc=agregarFuncion(punteroFunc,(yyvsp[(2) - (5)].s.cadena),(yyvsp[(1) - (5)].s.cadena));
                                                                         funcionActual=ultimoDeLaLista(punteroFunc);
                                                                         funcionActual->parametros=asignar(parametros);
-                                                                        parametros=NULL;
                                                                         }else{
-                                                                          yyerror("Ya existe la variable");
-                                                                        flag_error==1;};}
+                                                                           yyerror("Ya existe la variable\n");
+                                                                           printf("Ya existe la variable\n");             
+                                                                           flag_error==1;}
+                                                                        parametros=NULL;;}
     break;
 
   case 20:
 
 /* Line 1455 of yacc.c  */
-#line 96 "TP4.y"
+#line 98 "TP4.y"
     {
                                                                         if(controlId(punteroId,(yyvsp[(2) - (5)].s.cadena))){
                                                                         punteroId=agregarId(punteroId,(yyvsp[(2) - (5)].s.cadena),tipoDeDato((yyvsp[(1) - (5)].s.cadena)));
                                                                         punteroFunc=agregarFuncion(punteroFunc,(yyvsp[(2) - (5)].s.cadena),(yyvsp[(1) - (5)].s.cadena));
                                                                         funcionActual=ultimoDeLaLista(punteroFunc);
                                                                         funcionActual->parametros=asignar(parametros);
-                                                                        parametros=NULL;
                                                                         }else{
-                                                                          yyerror("Ya existe la variable");
-                                                                          flag_error==1;};}
+                                                                          yyerror("Ya existe la variable\n");
+                                                                           printf("Ya existe la variable\n");
+                                                                          flag_error==1;}
+                                                                        parametros=NULL;;}
     break;
 
   case 21:
 
 /* Line 1455 of yacc.c  */
-#line 107 "TP4.y"
+#line 110 "TP4.y"
     {
                                                                             if(controlId(punteroId,(yyvsp[(2) - (6)].s.cadena))){
                                                                             punteroId=agregarId(punteroId,(yyvsp[(2) - (6)].s.cadena),tipoDeDato((yyvsp[(1) - (6)].s.cadena)));
                                                                             punteroFunc=agregarFuncion(punteroFunc,(yyvsp[(2) - (6)].s.cadena),(yyvsp[(1) - (6)].s.cadena));
                                                                             funcionActual=ultimoDeLaLista(punteroFunc);
                                                                             funcionActual->parametros=asignar(parametros);
-                                                                            parametros=NULL;
                                                                             }else{
-                                                                              yyerror("Ya existe la variable");
-                                                                              flag_error==1;};}
+                                                                              funcionActual = buscarFuncion(punteroFunc,(yyvsp[(2) - (6)].s.cadena));
+                                                                              if(strcmp(funcionActual->tipo,(yyvsp[(1) - (6)].s.cadena))!=0 || !controlParametros(funcionActual->parametros,parametros)){
+                                                                                yyerror("Error en la defincion de la funcion");
+                                                                                printf("Error en la defincion de la funcion\n");                                                                               
+                                                                                flag_error==1;
+                                                                              }}
+                                                                              parametros=NULL;;}
     break;
 
   case 22:
 
 /* Line 1455 of yacc.c  */
-#line 117 "TP4.y"
+#line 124 "TP4.y"
     {
                                                                         if(controlId(punteroId,(yyvsp[(2) - (6)].s.cadena))){
-                                                                        punteroId=agregarId(punteroId,(yyvsp[(2) - (6)].s.cadena),tipoDeDato((yyvsp[(1) - (6)].s.cadena)));
-                                                                        punteroFunc=agregarFuncion(punteroFunc,(yyvsp[(2) - (6)].s.cadena),(yyvsp[(1) - (6)].s.cadena));
-                                                                        funcionActual=ultimoDeLaLista(punteroFunc);
-                                                                        funcionActual->parametros=asignar(parametros);
-                                                                        parametros=NULL;
-                                                                        }else{
-                                                                          yyerror("Ya existe la variable");
-                                                                          flag_error==1;};}
+                                                                            punteroId=agregarId(punteroId,(yyvsp[(2) - (6)].s.cadena),tipoDeDato((yyvsp[(1) - (6)].s.cadena)));
+                                                                            punteroFunc=agregarFuncion(punteroFunc,(yyvsp[(2) - (6)].s.cadena),(yyvsp[(1) - (6)].s.cadena));
+                                                                            funcionActual=ultimoDeLaLista(punteroFunc);
+                                                                            funcionActual->parametros=asignar(parametros);
+                                                                            }else{
+                                                                              funcionActual = buscarFuncion(punteroFunc,(yyvsp[(2) - (6)].s.cadena));
+                                                                              if(strcmp(funcionActual->tipo,(yyvsp[(1) - (6)].s.cadena))!=0 || !controlParametros(funcionActual->parametros,parametros)){
+                                                                                 yyerror("Error en la defincion de la funcion");
+                                                                                 printf("Error en la defincion de la funcion\n");                                                                             
+                                                                                flag_error==1;
+                                                                              }}
+                                                                              parametros=NULL;;}
     break;
 
   case 26:
 
 /* Line 1455 of yacc.c  */
-#line 133 "TP4.y"
+#line 144 "TP4.y"
     {parametros=agregarVariable(parametros,(yyvsp[(2) - (2)].s.cadena),(yyvsp[(1) - (2)].s.cadena));/*mostrarListaVariables(parametros);*/;}
     break;
 
   case 27:
 
 /* Line 1455 of yacc.c  */
-#line 135 "TP4.y"
+#line 146 "TP4.y"
     { 
                                                 aplicarTipoVar(actualDeclaracion,(yyvsp[(1) - (2)].s.cadena));
                                                 aplicarTipoId(actualId,tipoDeDato((yyvsp[(1) - (2)].s.cadena)));
@@ -1717,161 +1731,213 @@ yyreduce:
   case 30:
 
 /* Line 1455 of yacc.c  */
-#line 154 "TP4.y"
+#line 165 "TP4.y"
     {  
                                 if(controlId(punteroId,(yyvsp[(1) - (1)].s.cadena)) && controlId(actualId,(yyvsp[(1) - (1)].s.cadena))){
                                   actualDeclaracion=agregarVariable(actualDeclaracion,(yyvsp[(1) - (1)].s.cadena),"");
                                   actualId=agregarId(actualId,(yyvsp[(1) - (1)].s.cadena),0);
                                 }else{
-                                  yyerror("Ya existe la variable");
+                                  yyerror("");
+                                  printf("Ya existe la variable\n");
                                   flag_error==1;};}
     break;
 
   case 32:
 
 /* Line 1455 of yacc.c  */
-#line 163 "TP4.y"
+#line 175 "TP4.y"
     {(yyval.s.tipo) = (yyvsp[(1) - (2)].s.tipo); strcpy((yyval.s.cadena),(yyvsp[(1) - (2)].s.cadena));(yyval.s.tipo)=(yyvsp[(1) - (2)].s.tipo);}
     break;
 
   case 46:
 
 /* Line 1455 of yacc.c  */
-#line 184 "TP4.y"
+#line 196 "TP4.y"
     { 
                                                                                   if(lvalueError((yyvsp[(1) - (3)].s.cadena))){
-                                                                                  printf("Error de lValue");
+                                                                                  yyerror("");
+                                                                                  printf("Error de lValue\n");
                                                                                   }else{
                                                                                   if(controlOperacion(punteroId,(yyvsp[(1) - (3)].s.cadena),(yyvsp[(3) - (3)].s.cadena),(yyvsp[(1) - (3)].s.tipo),(yyvsp[(3) - (3)].s.tipo))){
                                                                                     (yyval.s.tipo) = (yyvsp[(1) - (3)].s.tipo); 
                                                                                     strcpy((yyval.s.cadena),(yyvsp[(1) - (3)].s.cadena));
                                                                                   }else{
-                                                                                    printf("Error de tipos");
+                                                                                    yyerror("");
+                                                                                    printf("Error de tipos\n");
                                                                                     flag_error=1;YYERROR;}};}
     break;
 
   case 53:
 
 /* Line 1455 of yacc.c  */
-#line 203 "TP4.y"
+#line 217 "TP4.y"
     {if(controlOperacion(punteroId,(yyvsp[(1) - (3)].s.cadena),(yyvsp[(3) - (3)].s.cadena),(yyvsp[(1) - (3)].s.tipo),(yyvsp[(3) - (3)].s.tipo))){
                                                                           (yyval.s.tipo) = (yyvsp[(1) - (3)].s.tipo);
                                                                           strcpy((yyval.s.cadena),(yyvsp[(1) - (3)].s.cadena));
                                                                           }else{
+                                                                            yyerror("");
                                                                           flag_error=1;YYERROR;};}
     break;
 
   case 55:
 
 /* Line 1455 of yacc.c  */
-#line 210 "TP4.y"
+#line 225 "TP4.y"
     {if(controlOperacion(punteroId,(yyvsp[(1) - (3)].s.cadena),(yyvsp[(3) - (3)].s.cadena),(yyvsp[(1) - (3)].s.tipo),(yyvsp[(3) - (3)].s.tipo))){
                                                                           (yyval.s.tipo) = (yyvsp[(1) - (3)].s.tipo);
                                                                           strcpy((yyval.s.cadena),(yyvsp[(1) - (3)].s.cadena));
-                                                                          }else{
+                                                                          }else{   
+                                                                            yyerror("");                                                                         
                                                                           flag_error=1;YYERROR;};}
     break;
 
   case 57:
 
 /* Line 1455 of yacc.c  */
-#line 217 "TP4.y"
+#line 233 "TP4.y"
     {if(controlOperacion(punteroId,(yyvsp[(1) - (3)].s.cadena),(yyvsp[(3) - (3)].s.cadena),(yyvsp[(1) - (3)].s.tipo),(yyvsp[(3) - (3)].s.tipo))){
                                                                           (yyval.s.tipo) = (yyvsp[(1) - (3)].s.tipo);
                                                                           strcpy((yyval.s.cadena),(yyvsp[(1) - (3)].s.cadena));
                                                                           (yyval.s.tipo)=(yyvsp[(1) - (3)].s.tipo);
                                                                           }else{
+                                                                            yyerror("");
                                                                           flag_error=1;YYERROR;};}
     break;
 
   case 60:
 
 /* Line 1455 of yacc.c  */
-#line 227 "TP4.y"
+#line 244 "TP4.y"
     {if(controlOperacion(punteroId,(yyvsp[(1) - (3)].s.cadena),(yyvsp[(3) - (3)].s.cadena),(yyvsp[(1) - (3)].s.tipo),(yyvsp[(3) - (3)].s.tipo))){
                                                                           (yyval.s.tipo) = (yyvsp[(1) - (3)].s.tipo);
                                                                           strcpy((yyval.s.cadena),(yyvsp[(1) - (3)].s.cadena));
                                                                           (yyval.s.tipo)=(yyvsp[(1) - (3)].s.tipo);
                                                                           }else{
+                                                                            yyerror("");
                                                                           flag_error=1;YYERROR;};}
     break;
 
   case 66:
 
 /* Line 1455 of yacc.c  */
-#line 237 "TP4.y"
+#line 255 "TP4.y"
     {if(controlOperacion(punteroId,(yyvsp[(1) - (3)].s.cadena),(yyvsp[(3) - (3)].s.cadena),(yyvsp[(1) - (3)].s.tipo),(yyvsp[(3) - (3)].s.tipo))){
                                                                           (yyval.s.tipo) = (yyvsp[(1) - (3)].s.tipo);
                                                                           strcpy((yyval.s.cadena),(yyvsp[(1) - (3)].s.cadena));
                                                                           (yyval.s.tipo)=(yyvsp[(1) - (3)].s.tipo);
                                                                           }else{
+                                                                            yyerror("");
                                                                           flag_error=1;YYERROR;};}
     break;
 
   case 67:
 
 /* Line 1455 of yacc.c  */
-#line 243 "TP4.y"
+#line 262 "TP4.y"
     {if(controlOperacion(punteroId,(yyvsp[(1) - (3)].s.cadena),(yyvsp[(3) - (3)].s.cadena),(yyvsp[(1) - (3)].s.tipo),(yyvsp[(3) - (3)].s.tipo))){
                                                                           (yyval.s.tipo) = (yyvsp[(1) - (3)].s.tipo);
                                                                           strcpy((yyval.s.cadena),(yyvsp[(1) - (3)].s.cadena));
                                                                           (yyval.s.tipo)=(yyvsp[(1) - (3)].s.tipo);
                                                                           }else{
+                                                                            yyerror("");
                                                                           flag_error=1;YYERROR;};}
     break;
 
   case 69:
 
 /* Line 1455 of yacc.c  */
-#line 251 "TP4.y"
+#line 271 "TP4.y"
     {if(controlOperacion(punteroId,(yyvsp[(1) - (3)].s.cadena),(yyvsp[(3) - (3)].s.cadena),(yyvsp[(1) - (3)].s.tipo),(yyvsp[(3) - (3)].s.tipo))){
                                                                           (yyval.s.tipo) = (yyvsp[(1) - (3)].s.tipo);
                                                                           strcpy((yyval.s.cadena),(yyvsp[(1) - (3)].s.cadena));
                                                                           (yyval.s.tipo)=(yyvsp[(1) - (3)].s.tipo);
                                                                           }else{
+                                                                            yyerror("");
                                                                           flag_error=1;YYERROR;};}
     break;
 
   case 70:
 
 /* Line 1455 of yacc.c  */
-#line 257 "TP4.y"
+#line 278 "TP4.y"
     {if(controlOperacion(punteroId,(yyvsp[(1) - (3)].s.cadena),(yyvsp[(3) - (3)].s.cadena),(yyvsp[(1) - (3)].s.tipo),(yyvsp[(3) - (3)].s.tipo))){
                                                                           (yyval.s.tipo) = (yyvsp[(1) - (3)].s.tipo);
                                                                           strcpy((yyval.s.cadena),(yyvsp[(1) - (3)].s.cadena));
                                                                           (yyval.s.tipo)=(yyvsp[(1) - (3)].s.tipo);
                                                                           }else{
+                                                                            yyerror("");
                                                                           flag_error=1;YYERROR;};}
     break;
 
   case 72:
 
 /* Line 1455 of yacc.c  */
-#line 265 "TP4.y"
+#line 287 "TP4.y"
     {  if(!lvalueError((yyvsp[(1) - (2)].s.cadena))){
                                                   (yyval.s.tipo) = (yyvsp[(1) - (2)].s.tipo);
                                                   strcpy((yyval.s.cadena),(yyvsp[(1) - (2)].s.cadena));
                                                   }else{
-                                                    printf("Error de lValue");
+                                                    yyerror("");
+                                                    printf("Error de lValue\n");
                                                     flag_error=1;YYERROR;};}
     break;
 
   case 73:
 
 /* Line 1455 of yacc.c  */
-#line 271 "TP4.y"
+#line 294 "TP4.y"
     {  if(!lvalueError((yyvsp[(1) - (2)].s.cadena))){
                                                   (yyval.s.tipo) = (yyvsp[(1) - (2)].s.tipo);
                                                   strcpy((yyval.s.cadena),(yyvsp[(1) - (2)].s.cadena));
                                                   }else{
-                                                    printf("Error de lValue");
+                                                    yyerror("");
+                                                    printf("Error de lValue\n");
                                                     flag_error=1;YYERROR;};}
+    break;
+
+  case 82:
+
+/* Line 1455 of yacc.c  */
+#line 310 "TP4.y"
+    {
+                                                              if((yyvsp[(1) - (4)].s.tipo)==5){
+                                                                funcionActual = buscarFuncion(punteroFunc,(yyvsp[(1) - (4)].s.cadena));
+                                                                if(funcionActual!=NULL){
+                                                                  if(!controlArgumentos(funcionActual->parametros,argumentosP)){
+                                                                    yyerror("");
+                                                                    printf("No se corresponden los argumentos con la funcion\n");
+                                                                  }
+                                                                }else{
+                                                                  yyerror("");
+                                                                  printf("No existe la funcion\n");
+                                                                }
+                                                              }else{
+                                                                yyerror("");
+                                                                printf("No es una funcion\n");
+                                                              }
+                                                              argumentosP==NULL;
+                                                             ;}
+    break;
+
+  case 85:
+
+/* Line 1455 of yacc.c  */
+#line 332 "TP4.y"
+    {
+                              int tipo = tipoId(punteroId,(yyvsp[(1) - (1)].s.cadena),(yyvsp[(1) - (1)].s.tipo));
+                              if(tipo == -1){
+                                yyerror("");
+                                printf("No existe la variable\n");
+                              }else{
+                                argumentosP=agregarVariable(argumentosP,(yyvsp[(1) - (1)].s.cadena),tipoDeDatoC(tipo));
+                              }
+                              ;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1875 "TP4.tab.c"
+#line 1941 "TP4.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2083,12 +2149,12 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 299 "TP4.y"
+#line 350 "TP4.y"
 
 
 yyerror (s)  
 {
-   printf ("Hubo un error en la linea %d",lines);
+   printf ("Hubo un error en la linea %d ",lines);
 }
 
 int main ()

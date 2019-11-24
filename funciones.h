@@ -254,6 +254,16 @@ int controlParametros(struct nodoVariable *original,struct nodoVariable *nuevo){
 	return 1;
 }
 
+int controlDeTiposArg(char* tipo1,char* tipo2){
+	if((strcmp(tipo1,"int")==0 || strcmp(tipo1,"float")==0  || strcmp(tipo1,"char")==0 )&&(strcmp(tipo2,"int")==0 || strcmp(tipo2,"float")==0  || strcmp(tipo2,"char")==0 )){
+		return 1;
+	}
+	if((strcmp(tipo1,"char*")==0  && strcmp(tipo2,"char*")==0)){
+		return 1;
+	}
+	return 0;
+}
+
 int controlArgumentos(struct nodoVariable *parametros,struct nodoVariable *argumentos){
 	if(sizeListaVar(parametros) != sizeListaVar(argumentos)){
 		return 0;
@@ -262,7 +272,7 @@ int controlArgumentos(struct nodoVariable *parametros,struct nodoVariable *argum
 	struct nodoVariable *auxN=argumentos;
 	if(parametros!=NULL){
         while(auxO!=NULL){
-			if(strcmp(auxO->tipo,auxN->tipo)){	
+			if(!controlDeTiposArg(auxO->tipo,auxN->tipo)){	
 				return 0;
 			}
             auxO=auxO->next;
@@ -293,6 +303,7 @@ int controlDeTiposOperacion(int tipo1,int tipo2){
 		return 0;
 	}
 }
+
 int controlOperacion(struct nodoId *punteroId,char *cadena1,char *cadena2,int tipo1, int tipo2){
 	tipo1 = tipoId(punteroId,cadena1,tipo1);
 	tipo2 = tipoId(punteroId,cadena2,tipo2);
@@ -321,5 +332,23 @@ int tipoDeDato(char* tipo){
 				}else{
 					if(!strcmp(tipo,"void")){
 						return 0;
+					}}}}}
+}
+
+char* tipoDeDatoC(int tipo){
+	if(tipo==1){
+		return "int";
+	}else {
+		if(tipo==2){
+			return "float";
+		}else{
+			if(tipo==3){
+				return "char";
+			}else{
+				 if(tipo==4){
+					return "char*";
+				}else{
+					if(tipo==0){
+						return "void";
 					}}}}}
 }

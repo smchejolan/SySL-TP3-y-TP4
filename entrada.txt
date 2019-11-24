@@ -1,11 +1,13 @@
 int a,b,c;
 int l;
+int sumar(int num1,int num2);
 int main(int ds,int vf);
 int main(int ds,int vf){
 	int k,dd,sa;
 	char f,gdd;
 	char sdad;
 	f='s';
+	k = sumar(4,f);
 	k=4;
 	while(1+1){
 	dd = 2 +2 ;
